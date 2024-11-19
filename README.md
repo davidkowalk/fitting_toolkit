@@ -1,7 +1,7 @@
 # Fitting Toolkit
 This toolkit aims at providing flexible and powerful tools for data analysis and modelling, but remain easy to use.
 
-Here I aim to walk the line between the extremes in this field. On the one side lie toolkits like Kafe2 which are easy and comfortable, however the resulting graphics are highly specified, cluttered and usually unfit for puplication. On the other lie data analysis systems like Cern's ROOT, which are fast and highly capable, however have a steep learning curve and overshoot the requirements for most experiments.
+Here I aim to walk the line between the extremes in this field. On the one side lie toolkits like Kafe2 which are easy and comfortable, however the resulting graphics are highly specified, cluttered and usually unfit for publication. On the other lie data analysis systems like Cern's ROOT, which are fast and highly capable, however have a steep learning curve and overshoot the requirements for most experiments.
 
 This toolkit is aimed primarily at my peers, students of physics at the university of bonn, and to a degree at professionals within my field. I am optimizing this toolkit to be used on the scale typical of lab courses and homework assignments but if possible it should be powerful enough to run decently sized datasets on an average laptop.
 
