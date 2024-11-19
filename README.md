@@ -1,7 +1,7 @@
 # Fitting Toolkit
 This toolkit aims at providing flexible and powerful tools for data analysis and modelling, but remain easy to use.
 
-Here I aim to walk the line between the extremes in this field. On the one side lie toolkits like Cafe2 which are fast and comfortable, however the resulting graphics are highly specific, unoptimized and usually unfit for puplication. On the other lie data analysis systems like Cern's ROOT, which are fast and highly capable, however have a steep learning curve and overshoot the requirements for most experiments.
+Here I aim to walk the line between the extremes in this field. On the one side lie toolkits like Cafe2 which are easy and comfortable, however the resulting graphics are highly specified, cluttered and usually unfit for puplication. On the other lie data analysis systems like Cern's ROOT, which are fast and highly capable, however have a steep learning curve and overshoot the requirements for most experiments.
 
 This toolkit is aimed primarily at my peers, students of physics at the university of bonn, and to a degree at professionals within my field. I am optimizing this toolkit to be used on the scale typical of lab courses and homework assignments but if possible it should be powerful enough to run decently sized datasets on an average laptop.
 
@@ -48,12 +48,12 @@ This functions returns 4 arrays. First the parameters of the model, the covarian
 The resulting fit can now be plotted. This toolkit provides a premade function to generate plots:
 ```python
 from matplotlib import pyplot as plt
-fig, ax = plot_fit(x, f, y, params, lower_conf, upper_conf, xerror=dx, yerror=df)
+fig, ax = plot_fit(x, y, f, params, lower_conf, upper_conf, xerror=dx, yerror=dy)
 plt.show()
 ```
 Note that the toolkit does not automatically display the fitted values. Instead the figure and axis-objects are returned.
 
-![Example Graph](./docs/example_fit.png)
+![Example Graph](./docs/img/example_fit.png)
 
 ## Methods Used
 The Toolkit uses "Bootstrapping" to generate the confidence interval. The `curve_fit` function takes the `resamples` parameter, which define how many resamples of the parameters are generated. Default is 50000.
