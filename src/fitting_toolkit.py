@@ -78,7 +78,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
             - lower_conf (numpy.ndarray): The lower bounds of the confidence intervals for each data point.
             - upper_conf (numpy.ndarray): The upper bounds of the confidence intervals for each data point.
     """
-    params, cov = sc_curve_fit(f = model, xdata = xdata, ydata = ydata, sigma = yerror, absolute_sigma=True, **kwargs)
+    params, cov = sc_curve_fit(f = model, xdata = xdata, ydata = ydata, sigma = yerror, **kwargs)
     if confidence_resolution is None:
         resampled_points = xdata
     elif confidence_resolution > 0:
