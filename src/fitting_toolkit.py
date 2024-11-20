@@ -54,7 +54,7 @@ def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array,
     
     return np.array(lower_conf), np.array(upper_conf)
 
-def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, **kwargs) -> tuple[np.array, np.array, np.array, np.array]:
+def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, confidence_resolution: int = None, **kwargs) -> tuple[np.array, np.array, np.array, np.array]:
     """
     Fits a model to data and calculates confidence intervals for the fitted parameters and predictions.
 
@@ -68,6 +68,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
         ydata (numpy.ndarray): The observed data corresponding to `xdata`.
         yerror (numpy.ndarray, optional): The uncertainties in the observed data `ydata`. Default is None.
         resamples (int, optional): The number of resampling iterations for bootstrapping confidence intervals. Default is 5000.
+        confidence_resolution (int, optional): If specified the confidence interval will be calculated at linearily spaced points along x-axis. Otherwise xdata is used.
         **kwargs: Additional arguments passed to SciPy's `curve_fit` function.
 
     Returns:
@@ -78,11 +79,18 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
             - upper_conf (numpy.ndarray): The upper bounds of the confidence intervals for each data point.
     """
     params, cov = sc_curve_fit(f = model, xdata = xdata, ydata = ydata, sigma = yerror, absolute_sigma=True, **kwargs)
-    lower_conf, upper_conf = confidence_interval(model, xdata, params, cov, resamples)
+    if confidence_resolution is None:
+        resampled_points = xdata
+    elif confidence_resolution > 0:
+        resampled_points = np.linspace(min(xdata), max(xdata), confidence_resolution) 
+    else:
+        raise ValueError("Unable to specify confidence points")
+    
+    lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples)
 
     return params, cov, lower_conf, upper_conf
 
-def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None, markersize = 4, capsize = 4) -> tuple[plt.figure, plt.axes]:
+def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None, confidence_resolution: int = None, markersize = 4, capsize = 4, **kwargs) -> tuple[plt.figure, plt.axes]:
     """
     Plots the model fit to the data along with its confidence intervals.
 
@@ -113,13 +121,21 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
         - The top and right spines of the plot are hidden for better visualization.
         - A grid is added to the plot for improved readability.
     """
+
+    if confidence_resolution is None:
+        resampled_points = xdata
+    elif confidence_resolution > 0:
+        resampled_points = np.linspace(min(xdata), max(xdata), confidence_resolution) 
+    else:
+        raise ValueError("Unable to specify confidence points")
+    
     fig, ax = plt.subplots()
 
     #ax.scatter(xdata, ydata, color = "black", s = 2)
     ax.errorbar(xdata, ydata, yerr = yerror, xerr = xerror, fmt=".", linestyle = "", color = "black", capsize=capsize, markersize = markersize)
     ax.plot(xdata, model(xdata, *params), color = "black", linewidth = 1, linestyle = "-")
-    ax.plot(xdata, upper, color = "black", linewidth = 0.75, linestyle = "--", label = "1$\sigma$-Confidence")
-    ax.plot(xdata, lower, color = "black", linewidth = 0.75, linestyle = "--")
+    ax.plot(resampled_points, upper, color = "black", linewidth = 0.75, linestyle = "--", label = "1$\sigma$-Confidence")
+    ax.plot(resampled_points, lower, color = "black", linewidth = 0.75, linestyle = "--")
 
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid("both")
