@@ -44,7 +44,50 @@ Note that the toolkit does not automatically display the fitted values. Instead 
 
 ![Example Graph](./img/example_fit.png)
 
-## Documentation
+## Errors and Uncertainties
+
+Understanding how the tools we use work with and calculate errors and uncertainties is a vital part of judging and quantifying the characteristics of our work. The Toolkit-curve-fit uses scipy's `curve_fit()` function which handles the fitting process as well as the calculation of errors and correlation of the fitted parameters. You can reference the modules [documentation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html) for a detailed explanation.
+
+### Covaraince Matrix and Sigma
+
+SciPy returns a [covariance matrix](https://en.wikipedia.org/wiki/Covariance) along with the optimal parameters of the fitted function. In [error propagation](https://en.wikipedia.org/wiki/Propagation_of_uncertainty) according to gauß we assume that the measured values are uncorrelated. In the real world this is usually not the case.
+
+> Covariance in probability theory and statistics is a measure of the joint variability of two random variables.
+
+The closer the absolute value of the covariance between two values is to the product of their standard deviations the more correlated they are. SciPy automatically finds a numerical approximation for the covariance between fit parameters.
+
+> Note that the relationship between cov and parameter error estimates is derived based on a linear approximation to the model function around the optimum. When this approximation becomes inaccurate, cov may not provide an accurate measure of uncertainty.
+
+Further the documentation notes:
+
+> How the sigma parameter affects the estimated covariance depends on `absolute_sigma` argument, as described above.
+
+The `absolute_sigma` determines the interpretation of and effect the data errors have on the variance and covariance of the fitted parameters. By default the `absolute_sigma = False` which means that the errors are only used as weights, i.e., as hints how important a point should be in the least-squares computation. To compute the covariance matrix, `scipy.optimize.curve_fit` then estimates the actual error from the average defiation from the optimized curve. [(Read More Here)](https://wwwstaff.ari.uni-heidelberg.de/tsapras/pub/pycourse/15.html) When fitting data with absolute errorbars as can be seen in the examples provided the `absolute_sigma` parameter should be set to `True` via the `**kwargs`.
+
+```python
+params, cov, lower_conf, upper_conf = curve_fit(model, x, y, yerror=dy, absolute_sigma = True)
+```
+
+Also note that only the y-error affects the uncertainty
+
+### Calculation of the Confidence Interval
+
+To estimate the confidence interval the fitted parameters are then resampled using their estimated means and covariance matrix. The number of resamples can be set via the `resamples = 5000` parameter.
+
+For each point on the x-axis the fitted function is calculated for each of the resampled parameter sets and using the `numpy.percentile` function an upper and a lower threshold for the confidence interval is estimated. By default this function is set so that exactly 1/6 of the resampled points lie above the interval and 1/6 lie below it. Therefore 2/3 of the resampled points lie between the interval thresholds, which corresponds to a 1-sigma interval.
+
+This method is often referred to as ["bootstrapping"](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) and presents a simple example of this method.
+
+By default the confidence interval is estimated at each x-position provided, however this may cause issues of resolution when few datapoints are provided or the datapoints are non-uniformally distributed along the x-axis, or it may be computanionally expensive for large datasets. When `curve_fit`is provided a `confidence_resolution: int` parameter, the number of points provided are generated between the highest and lowest point on the x-axis and used as the x-axis instead.
+
+```python
+resampled_points = np.linspace(min(xdata), max(xdata), confidence_resolution) 
+```
+
+Note that the `confidence_resolution` must be provided to both `curve_fit` and `plot_fit`  
+
+
+## Code Documentation
 
 By separating the fitting functionality from the display options a user can utilize the parts independently of each other.
 

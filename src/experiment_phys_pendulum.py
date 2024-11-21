@@ -16,7 +16,7 @@ dt = 0.5/10
 
 confidence_resolution = 100
 
-params, cov, lower_conf, upper_conf = curve_fit(model, len, t, yerror=dt, confidence_resolution = confidence_resolution)
+params, cov, lower_conf, upper_conf = curve_fit(model, len, t, yerror=dt, confidence_resolution = confidence_resolution, absolute_sigma = True)
 fig, ax = plot_fit(len, t, model, params, lower_conf, upper_conf, xerror=dlen, yerror=dt, confidence_resolution = confidence_resolution)
 ax.set_xlabel("Pendulum Length / cm")
 ax.set_ylabel("Oscillation Time T / s")
