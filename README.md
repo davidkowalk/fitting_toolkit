@@ -17,6 +17,8 @@ This project requires the following modules:
 - matplotlib
 - scipy
 
+It is highly recommended that the user familiarizes themselves with the functionality of these modules first. A rudimentary understanding of `numpy` and `matplotlib.pyplot` is required.
+
 ### Getting Started
 
 To get started find the `fitting_toolkit.py` in the `src` folder and copy it into your project.
@@ -51,11 +53,8 @@ from matplotlib import pyplot as plt
 fig, ax = plot_fit(x, y, f, params, lower_conf, upper_conf, xerror=dx, yerror=dy)
 plt.show()
 ```
-Note that the toolkit does not automatically display the fitted values. Instead the figure and axis-objects are returned.
+Note that the fitted function is not automatically displayed. Instead the figure and axis-objects are returned.
 
 ![Example Graph](./docs/img/example_fit.png)
 
-## Methods Used
-The Toolkit uses "Bootstrapping" to generate the confidence interval. The `curve_fit` function takes the `resamples` parameter, which define how many resamples of the parameters are generated. Default is 5000.
-
-`curve_fit` passes this parameter onto `confidence_interval` which generates the defined number of datapoints in the parameter space. For each datapoint the resulting distribution around each point defined by `xdata` is generated and the thresholds are chosen so that 2/3 of the points are between them.
+For a deeper explanation and tutorials please reference the [documentation](./docs/manual.md/).
