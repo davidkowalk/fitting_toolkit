@@ -76,7 +76,7 @@ To estimate the confidence interval the fitted parameters are then resampled usi
 
 ![PDF of Example Graph](./img/example_fit_pdf.png)
 
-For each point on the x-axis the fitted function is calculated for each of the resampled parameter sets and using the `numpy.percentile` function an upper and a lower threshold for the confidence interval is estimated. By default this function is set so that exactly 1/6 of the resampled points lie above the interval and 1/6 lie below it. Therefore 2/3 of the resampled points lie between the interval thresholds, which corresponds to a 1-sigma interval.
+For each point on the x-axis, the fitted function is calculated using all the resampled parameter sets. Then, the `numpy.percentile` function is used to estimate the upper and lower bounds of the confidence interval. By default, these bounds are set so that 1/6 of the resampled values are above the interval and 1/6 are below it. This means that 2/3 of the resampled values fall within the interval, which corresponds to a 1-sigma confidence level.
 
 This method is often referred to as ["bootstrapping"](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) and presents a simple example of this method.
 
