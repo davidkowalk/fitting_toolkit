@@ -68,7 +68,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
         ydata (numpy.ndarray): The observed data corresponding to `xdata`.
         yerror (numpy.ndarray, optional): The uncertainties in the observed data `ydata`. Default is None.
         resamples (int, optional): The number of resampling iterations for bootstrapping confidence intervals. Default is 5000.
-        confidence_resolution (int, optional): If specified the confidence interval will be calculated at linearily spaced points along x-axis. Otherwise xdata is used.
+        confidence_resolution (int, optional): If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
         **kwargs: Additional arguments passed to SciPy's `curve_fit` function.
 
     Returns:
@@ -90,7 +90,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
 
     return params, cov, lower_conf, upper_conf
 
-def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None, confidence_resolution: int = None, markersize = 4, capsize = 4, **kwargs) -> tuple[plt.figure, plt.axes]:
+def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None, confidence_resolution: int = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
     """
     Plots the model fit to the data along with its confidence intervals.
 
@@ -107,8 +107,15 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
         upper (numpy.ndarray): The upper bounds of the confidence intervals for the model predictions.
         xerror (numpy.ndarray, optional): The uncertainties in the x-values of the data points. Default is None.
         yerror (numpy.ndarray, optional): The uncertainties in the y-values of the data points. Default is None.
+        confidence_resolution (int, optional): If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
+        fit_color (color, optional): color of the fitted function.
         markersize (int, optional): The size of the markers for the data points. Default is 4.
         capsize (int, optional): The size of the caps on the error bars. Default is 4.
+        fit_label (str, optional): Label applied to the least square fit.
+        confidence_label(str, optional): Label applied to upper confidence threshold.
+        fig (matplotlib.pyplot.Figure, optional): Figure Object to use for plotting. If not provided it is either inferred from ax if given or a new object is generated.
+        ax (matplotlib.axes.Axes, optional): Axes object to be used for plotting. If not provided it is either inferred from fig, or a new object is generated. 
+        **kwargs: Additional arguments passed to `pyplot.subplots()`
 
     Returns:
         tuple: A tuple containing:
@@ -129,13 +136,17 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
     else:
         raise ValueError("Unable to specify confidence points")
     
-    fig, ax = plt.subplots()
+    if fig is None and ax is None:
+        fig, ax = plt.subplots(**kwargs)
+    elif ax is None:
+        ax = fig.axes
+    elif fig is None:
+        fig = ax.get_figure()
 
-    #ax.scatter(xdata, ydata, color = "black", s = 2)
-    ax.errorbar(xdata, ydata, yerr = yerror, xerr = xerror, fmt=".", linestyle = "", color = "black", capsize=capsize, markersize = markersize)
-    ax.plot(xdata, model(xdata, *params), color = "black", linewidth = 1, linestyle = "-")
-    ax.plot(resampled_points, upper, color = "black", linewidth = 0.75, linestyle = "--", label = "1$\sigma$-Confidence")
-    ax.plot(resampled_points, lower, color = "black", linewidth = 0.75, linestyle = "--")
+    ax.errorbar(xdata, ydata, yerr = yerror, xerr = xerror, fmt=".", linestyle = "", color = fit_color, capsize=capsize, markersize = markersize)
+    ax.plot(resampled_points, model(resampled_points, *params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label)
+    ax.plot(resampled_points, upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label)
+    ax.plot(resampled_points, lower, color = fit_color, linewidth = 0.75, linestyle = "--")
 
     ax.spines[["top", "right"]].set_visible(False)
     ax.grid("both")

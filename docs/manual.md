@@ -1,12 +1,12 @@
 # Manual for the Fitting Toolkit
 
-This toolkit provides all necessarry functions for fitting and displaying data in a scatter plot with errorbars, but we also maintain acess to the basic functionalities.
+This toolkit provides all necessary functions for fitting and displaying data in a scatter plot with error bars, but we also maintain access to the basic functionalities.
 
-These instructions provide a basic introduction into the use of the toolkit and later explains how to use it's parts independently of each other.
+These instructions provide a basic introduction on how to use the toolkit and later explains how to use its parts independently of each other.
 
 ## Getting Started
 
-This section covers the use of the toolkit functionalities as intended, which will cover most use-cases.
+This section covers the use of the toolkit's functions as intended, which will cover most use cases.
 
 To get started find the `fitting_toolkit.py` in the `src` folder and copy it into your project.
 You can now import the relevant functions into your code:
@@ -20,7 +20,7 @@ We can now start by simply defining our data.
 ```python
 x = np.array((1, 2, 3, 4, 5))
 y = np.array((1, 2, 1.75, 2.25, 3))
-dy = 0.1*f+0.05
+dy = 0.1*y+0.05
 dx = 0.1
 ```
 For a model we chose a simple linear model:
@@ -32,7 +32,7 @@ We can now fit the model to the data:
 ```python
 params, cov, lower_conf, upper_conf = curve_fit(f, x, y, yerror=dy)
 ```
-This functions returns 4 arrays. First the parameters of the model, the covariance matrix of those parameters and then the lower and upper limits of the confidence interval around the fit. Note that the confidence interval is absolute. To get the error in relation to the fitted function you would need to find the difference at each point.
+This function returns 4 arrays. First the parameters of the model, the covariance matrix of those parameters and then the lower and upper limits of the confidence interval around the fit. Note that the confidence interval is absolute. To get the error in relation to the fitted function you would need to find the difference at each point.
 
 The resulting fit can now be plotted. This toolkit provides a premade function to generate plots:
 ```python
@@ -40,112 +40,122 @@ from matplotlib import pyplot as plt
 fig, ax = plot_fit(x, y, f, params, lower_conf, upper_conf, xerror=dx, yerror=dy)
 plt.show()
 ```
-Note that the toolkit does not automatically display the fitted values. Instead the figure and axis-objects are returned.
+Note that the fitted function is not automatically displayed. Instead the figure and axis objects are returned.
 
 ![Example Graph](./img/example_fit.png)
 
-## Documentation
+## Errors and Uncertainties
 
-By separating the fitting functionality from the display options a user can utilize the parts independently of each other.
+Understanding how the tools we use work with and calculate errors and uncertainties is a vital part of judging and quantifying the quality of our work. The toolkit's `curve_fit()` function uses scipy's `curve_fit()` function which handles the fitting process as well as the calculation of errors and correlation of the fitted parameters. You can reference the modules [documentation](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html) for a detailed explanation.
 
-### Using the Fitting Functionality
+### Covariance Matrix and Sigma
 
-To fit a dataset call
+SciPy returns a [covariance matrix](https://en.wikipedia.org/wiki/Covariance) along with the optimal parameters of the fitted function. In [error propagation](https://en.wikipedia.org/wiki/Propagation_of_uncertainty) according to gauß we assume that the measured values are uncorrelated. In the real world this is usually not the case.
+
+> Covariance in probability theory and statistics is a measure of the joint variability of two random variables.
+
+The closer the absolute value of the covariance between two values is to the product of their standard deviations the more correlated they are. SciPy automatically finds a numerical approximation for the covariance between fit parameters. To extract the standard deviation of the fitted parameters take the root of the matrix diagonal.
+
 ```python
-curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, **kwargs)
+s1, s2, ..., sn = np.sqrt(np.diagonal(cov))
 ```
+
+> Note that the relationship between cov and parameter error estimates is derived based on a linear approximation to the model function around the optimum. When this approximation becomes inaccurate, cov may not provide an accurate measure of uncertainty.
+
+Further the documentation notes:
+
+> How the sigma parameter affects the estimated covariance depends on `absolute_sigma` argument, as described above.
+
+The `absolute_sigma` determines the interpretation of and effect the data errors have on the variance and covariance of the fitted parameters. By default the `absolute_sigma = False` which means that the errors are only used as weights, i.e., as hints how important a point should be in the least-squares computation. To compute the covariance matrix, `scipy.optimize.curve_fit` then estimates the actual error from the average deviation from the optimized curve. [(Read More Here)](https://wwwstaff.ari.uni-heidelberg.de/tsapras/pub/pycourse/15.html) When fitting data with absolute error bars as can be seen in the examples provided the `absolute_sigma` parameter should be set to `True` via the `**kwargs`.
+
+```python
+params, cov, lower_conf, upper_conf = curve_fit(model, x, y, yerror=dy, absolute_sigma = True)
+```
+
+Also note that only the y-error affects the uncertainty
+
+### Calculation of the Confidence Interval
+
+To estimate the confidence interval the fitted parameters are then resampled using their estimated means and covariance matrix. The number of resamples can be set via the `resamples = 5000` parameter.
+
+![PD of Example Graph](./img/example_fit_pdf.png)
+
+For each point on the x-axis, the fitted function is calculated using all the resampled parameter sets. Then, the `numpy.percentile` function is used to estimate the upper and lower bounds of the confidence interval. By default, these bounds are set so that 1/6 of the resampled values are above the interval and 1/6 are below it. This means that 2/3 of the resampled values fall within the interval, which corresponds to a 1-sigma confidence level.
+
+This method is often referred to as ["bootstrapping"](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) and presents a simple example of this method.
+
+By default the confidence interval is estimated at each x-position of the data, however this may cause issues of resolution when data points are sparse or non-uniformly distributed along the x-axis, or it may be computationally expensive for large datasets. When a `confidence_resolution: int` parameter is set in `curve_fit`, that number of points is generated between the highest and lowest point on the x-axis and used as the x-axis instead.
+
+```python
+resampled_x_axis = np.linspace(min(xdata), max(xdata), confidence_resolution) 
+```
+
+Note that the `confidence_resolution` must be provided to both `curve_fit` and `plot_fit`  
+
+## Using Plot-Fit
+
+This section instructs on the basics of using the plot fit function.
+For function documentation consult `./functions.md`.
+
+> Note: This function is currently undocumented.
+
+### Plotting a Fitted Function
+
+`fitting_toolkit.plot_fit()` displays the fitted function generated by `fitting_toolkit.curve_fit()`. The following parameters are required:
 
 | Parameters | | |
-|----------|----------|-----------------|
-| **Name** | **Type** | **Description** |
-| model    | function | Function to be fitted. Must take `xdata` as a first argument and then an arbitrary number of fit parameters.|
-| xdata    | np.array | The independent variable where the data is measured. Each element should be float convertible if it is an array like object.
-| ydata    | np.array | The dependent data, a length M array - nominally f(xdata, ...)
-| yerror   | np.array | (optional) Determines the uncertainty in ydata. Pass absolute values.
-| resamples| int      | (optional) Number of samples to be generated in parameter space for bootstrapping.
-| **kwargs | any      | (optional) Parameters to be passed on to `scipy.optimize.curve_fit`
+|----------|------------|-----------------|
+| **Name** | **Type**   | **Description** |
+| xdata    | np.ndarray | The x-values of the data points.
+| ydata    | np.ndarray | The y-values of the data points.
+| model    | np.ndarray | The model function that takes `xdata` and model parameters as inputs.
+| params   | np.ndarray | The parameters for the fitted model.
+| lower    | np.ndarray | The lower bounds of the confidence intervals for the model predictions. 
+| upper    | np.ndarray | The upper bounds of the confidence intervals for the model predictions.
 
-| Returns | | |
-|----------|----------|-----------------|
-| **Name** | **Type** | **Description** |
-| params   | np.array | List of optimal parameters. Can be separated by `p1, p1, ..., pn = params`
-| cov      | np.array | Covariance Matrix of parameters as provided by `scipy.optimize.curve_fit`. Standard deviations can be calculated by `sigma = np.sqrt(np.diagonal(cov))`
-| lower_conf | np.array | Absolute y-values of lower edge of 1-sigma confidence interval.|
-| upper_conf | np.array | Absolute y-values of upper edge of 1-sigma confidence interval.
+If the upper and lower bounds were generated with a custom resolution, the same resolution must be provided in the `confidence_resolution` parameter.
 
-#### Using Custom Graphics
+For customization the function also provides the keywords `markersize`, `capsize`, `fit_label`, and `confidence_label`
 
-To generate your own plot you can use the returned values of `curve_fit`. Using a defined model `f(x, *params)`:
+You may also pass keyword arguments to `matplotlib.pyplot.subplots()` via `**kwargs`. 
+For comprehensive documentation please consult [`subplots()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html), [`figure()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure) and [`add_plot()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.add_subplot.html#matplotlib.figure.Figure.add_subplot).
+Please note that it's assumed that `subplots()` returns a figure object and a single axes object.
 
-```python
-params, cov, lower_conf, upper_conf = curve_fit(f, x, y)
-#calculate standard deviations for possible later use
-standard-deviations = np.sqrt(np.diagonal(cov))
-
-from matplotlib import pyplot as plt
-#scatter data
-plt.scatter(x, y)
-# plots the fitted parameters
-plt.plot(x, f(x, *params), color = "black")
-#plots the confidence interval
-plt.plot(x, lower_conf, color = "red")
-plt.plot(x, upper_conf, color = "red")
-#Display
-plt.show()
-```
-
-### Calculate Confidence Interval for an Existing Fit
-
-Given already fitted parameters and a covariance matrix a confidence interval can be calculated using `confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int)`
-
+Common parameters include:
 | Parameters | | |
-|----------|----------|-----------------|
-| **Name** | **Type** | **Description** |
-| model    | function | Model fitted to data
-| xdata    | np.array | The independent variable at which the confidence interval is to be calculated.
-| params   | np.array | Fitted parameters passed onto `model`.
-| cov      | np.array | Covariance matrix of `params`
-| resamples| int      | Number of resamples to be calculated.
+|----------|------------|-----------------|
+| **Name** | **Type**   | **Description** |
+| figsize | (float, float) |     Width, height in inches.
+| facecolor | color | The background color.
+| layout | str | The layout mechanism for positioning of plot elements to avoid overlapping Axes decorations (labels, ticks, etc).
+| aspect | str or float | {'auto', 'equal'} or float, aspect ratio of axes.
+| alpha | float | Set the alpha value used for blending - not supported on all backends.
 
-| Returns | | |
-|----------|----------|-----------------|
-| **Name** | **Type** | **Description** |
-| lower_conf | np.array | Absolute y-values of lower edge of 1-sigma confidence interval.|
-| upper_conf | np.array | Absolute y-values of upper edge of 1-sigma confidence interval.
 
-Example:
-Given a model `f(x, *params)`
+### Plotting Multiple Fits In the Same Graph
+
+To add a new fit to an existing graph provide the `figure` and the `axes` object returned when calling the function for the first time.
+
 ```python
-from scipy.optimize import curve_fit
-params, cov = sc_curve_fit(f = f, xdata = xdata, ydata = ydata, sigma = yerror, absolute_sigma=True, **kwargs) 
-lower_conf, upper_conf = confidence_interval(model, xdata, params, cov, resamples)
-```
-Errors relative to the fitted function can be calculated as thus:
-```python
-sigma_pos = upper_conf - f(x, *params)
-sigma_neg = f(x, *params) - lower_conf
-```
-So that the fitted value `x[i]` are
-```python
-print(f"f({x[i]:.2e}) = {f(x[i], *params):.2e} (+{sigma_pos[i]:.2e}/-{sigma_neg[i]:.2e})")
+# fit two datasets to the same model separately
+params1, cov1, lower_conf1, upper_conf1 = curve_fit(f, x1, y1)
+params2, cov2, lower_conf2, upper_conf2 = curve_fit(f, x2, y2)
+
+# display separately fitted models in the same graph
+fig, ax = plot_fit(x1, y1, f, params1, lower_conf1, upper_conf1)
+fig, ax = plot_fit(x2, y2, f, params2, lower_conf2, upper_conf2, fig = fig, ax = ax)
+# fig and ax are returned; however, reassigning them is not required
 ```
 
-### Generating Thresholds
-
-Given a bootstrapped distribution generate a custom interval for the confidence interval.
-
-Call `generate_thresholds(data, lower_frac=1/6, upper_frac=5/6)`
-
-| Parameters | | |
-|----------|----------|-----------------|
-| **Name** | **Type** | **Description** |
-| data     | np.array | At a defined point x give the y value for all points in parameter space.
-| lower_frac | float  | Fraction of data below lower threshold
-| upper_frac | float  | Fraction of data below upper threshold
+In this example both datasets are fitted to the same model `f`, however this is an arbitrary choice.
 
 
-| Returns | | |
-|----------|----------|-----------------|
-| **Name** | **Type** | **Description** |
-| lower_threshold | float | Point defined by `lower_frac` 
-| upper_threshold | float | Point defined by `upper_frac`
+![Example of multiple fits](./img/multiple_fits.png)
+
+It may be required to change the color of the fitted function for clarity, as can be seen in the example above.
+
+```python
+fig, ax = plot_fit(x, y, model, params, lower, upper, fit_color = "crimson", fit_label="data label", confidence_label="label confidence interval")
+```
+
+You may set the color of the graph with the `fit_color` attribute. To label your data pass a `fit_label` and a `confidence_label` or pass `None`to remove them.
