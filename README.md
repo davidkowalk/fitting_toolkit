@@ -1,3 +1,9 @@
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/davidkowalk/fitting_toolkit)
+![GitHub License](https://img.shields.io/github/license/davidkowalk/fitting_toolkit)
+![University](https://img.shields.io/badge/Univeristy_of_Bonn-brown)
+![Version](https://img.shields.io/badge/version-open%20beta-red)
+
+
 # Fitting Toolkit
 This toolkit aims at providing flexible and powerful tools for data analysis and modelling, but remain easy to use.
 
