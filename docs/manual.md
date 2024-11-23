@@ -78,7 +78,7 @@ Also note that only the y-error affects the uncertainty
 
 To estimate the confidence interval the fitted parameters are then resampled using their estimated means and covariance matrix. The number of resamples can be set via the `resamples = 5000` parameter.
 
-![PDF of Example Graph](./img/example_fit_pdf.png)
+![PD of Example Graph](./img/example_fit_pdf.png)
 
 For each point on the x-axis, the fitted function is calculated using all the resampled parameter sets. Then, the `numpy.percentile` function is used to estimate the upper and lower bounds of the confidence interval. By default, these bounds are set so that 1/6 of the resampled values are above the interval and 1/6 are below it. This means that 2/3 of the resampled values fall within the interval, which corresponds to a 1-sigma confidence level.
 
@@ -148,3 +148,14 @@ fig, ax = plot_fit(x2, y2, f, params2, lower_conf2, upper_conf2, fig = fig, ax =
 ```
 
 In this example both datasets are fitted to the same model `f`, however this is an arbitrary choice.
+
+
+![Example of multiple fits](./img/multiple_fits.png)
+
+It may be required to change the color of the fitted function for clarity, as can be seen in the example above.
+
+```python
+fig, ax = plot_fit(x, y, model, params, lower, upper, fit_color = "crimson", fit_label="data label", confidence_label="label confidence interval")
+```
+
+You may set the color of the graph with the `fit_color` attribute. To label your data pass a `fit_label` and a `confidence_label` or pass `None`to remove them.
