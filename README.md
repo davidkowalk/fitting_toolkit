@@ -1,3 +1,11 @@
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/davidkowalk/fitting_toolkit)
+![GitHub License](https://img.shields.io/github/license/davidkowalk/fitting_toolkit)
+![University](https://img.shields.io/badge/Univeristy_of_Bonn-brown)
+![Version](https://img.shields.io/badge/version-open%20beta-red)
+![GitHub Repo stars](https://img.shields.io/github/stars/davidkowalk/fitting_toolkit?style=flat&label=github%20stars)
+
+
+
 # Fitting Toolkit
 This toolkit aims at providing flexible and powerful tools for data analysis and modelling, but remain easy to use.
 
@@ -33,10 +41,10 @@ We can now start by simply defining our data.
 ```python
 x = np.array((1, 2, 3, 4, 5))
 y = np.array((1, 2, 1.75, 2.25, 3))
-dy = 0.1*f+0.05
+dy = 0.1*y+0.05
 dx = 0.1
 ```
-For a model we chose a simple linear model:
+We chose a simple linear model:
 ```python
 def f(x, a, b):
     return a * x + b
