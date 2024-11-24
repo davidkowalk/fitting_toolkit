@@ -96,6 +96,14 @@ Common parameters include:
 | aspect | str or float | {'auto', 'equal'} or float, aspect ratio of axes.
 | alpha | float | Set the alpha value used for blending - not supported on all backends.
 
+The matplotlib objects used are returned:
+
+| Returns | | |
+|----------|--------------------------|-----------------|
+| **Name** | **Type**                 | **Description** |
+| fig      | matplotlib.figure.Figure | Figure object used for graph.
+| ax       | matplotlib.axes.Axes     | Axes object used for graph.
+
 
 ## Calculate Confidence Interval for an Existing Fit
 
