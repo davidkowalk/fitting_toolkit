@@ -2,7 +2,7 @@ from scipy.optimize import curve_fit as sc_curve_fit
 import numpy as np
 from matplotlib import pyplot as plt
 
-def generate_thresholds(data, lower_frac=1/6, upper_frac=5/6):
+def generate_thresholds(data, lower_frac=0.15865, upper_frac=0.84135):
     """
     Generates two thresholds such that:
     - A fraction (lower_frac) of the data is below the lower threshold.
@@ -16,8 +16,8 @@ def generate_thresholds(data, lower_frac=1/6, upper_frac=5/6):
     Returns:
         tuple: (lower_threshold, upper_threshold)
     """
-    lower_threshold = np.percentile(data, lower_frac * 100)  # 16.67th percentile
-    upper_threshold = np.percentile(data, upper_frac * 100)  # 83.33rd percentile
+    lower_threshold = np.percentile(data, lower_frac * 100)
+    upper_threshold = np.percentile(data, upper_frac * 100)
     return lower_threshold, upper_threshold
 
 def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int) -> tuple[np.array, np.array]:
