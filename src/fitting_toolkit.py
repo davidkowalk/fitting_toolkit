@@ -35,7 +35,7 @@ def get_sigma_probability(n: float = 1):
 
     return 1/2 * (erf(n / 1.4142135623730951) - erf(-n / 1.4142135623730951))
 
-def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int) -> tuple[np.array, np.array]:
+def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int, nsigma: float = 1) -> tuple[np.array, np.array]:
     """
     Computes the confidence intervals for the predictions of a model based on a set of input data.
 
@@ -48,6 +48,7 @@ def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array,
         params (numpy.ndarray): The initial model parameters.
         cov (numpy.ndarray): The covariance matrix of the model parameters, used to generate resamples.
         resamples (int): The number of resampling iterations to generate for bootstrapping.
+        nsigma (float): Number of standard deviation in interval.
 
     Returns:
         tuple: A tuple containing:
@@ -58,18 +59,22 @@ def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array,
 
     params_resamples = random.transpose()
 
+    P = get_sigma_probability(nsigma)
+    upper_threshold = 0.5 + P/2
+    lower_threshold = 0.5 - P/2
+
     lower_conf = list()
     upper_conf = list()
 
     for x in xdata:
         distr = model(x, *params_resamples)
-        interval = generate_thresholds(distr)
+        interval = generate_thresholds(distr, lower_frac = lower_threshold, upper_frac = upper_threshold)
         lower_conf.append(interval[0])
         upper_conf.append(interval[1])
     
     return np.array(lower_conf), np.array(upper_conf)
 
-def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, confidence_resolution: int = None, **kwargs) -> tuple[np.array, np.array, np.array, np.array]:
+def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, confidence_resolution: int = None, nsigma:float = 1, **kwargs) -> tuple[np.array, np.array, np.array, np.array]:
     """
     Fits a model to data and calculates confidence intervals for the fitted parameters and predictions.
 
@@ -84,6 +89,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
         yerror (numpy.ndarray, optional): The uncertainties in the observed data `ydata`. Default is None.
         resamples (int, optional): The number of resampling iterations for bootstrapping confidence intervals. Default is 5000.
         confidence_resolution (int, optional): If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
+        nsigma (float): Number of standard deviation passed to confidence_interval()
         **kwargs: Additional arguments passed to SciPy's `curve_fit` function.
 
     Returns:
@@ -101,7 +107,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
     else:
         raise ValueError("Unable to specify confidence points")
     
-    lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples)
+    lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples, nsigma)
 
     return params, cov, lower_conf, upper_conf
 
