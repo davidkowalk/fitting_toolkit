@@ -1,4 +1,5 @@
 from scipy.optimize import curve_fit as sc_curve_fit
+from scipy.special import erf
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -19,6 +20,20 @@ def generate_thresholds(data, lower_frac=0.15865, upper_frac=0.84135):
     lower_threshold = np.percentile(data, lower_frac * 100)
     upper_threshold = np.percentile(data, upper_frac * 100)
     return lower_threshold, upper_threshold
+
+def get_sigma_probability(n: float = 1):
+    """
+    Returns probability for event to fall into n-sigma interval assuming a gaussian distribution:
+    P(mu - n*sigma < X < mu + n*sigma)  
+
+    Args:
+        n (float): Number of sigmas in interval
+
+    Returns:
+        p (float): Probability of falling into sigma interval.
+    """
+
+    return 1/2 * (erf(n / 1.4142135623730951) - erf(-n / 1.4142135623730951))
 
 def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int) -> tuple[np.array, np.array]:
     """
