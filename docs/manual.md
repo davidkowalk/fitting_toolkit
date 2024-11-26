@@ -92,6 +92,31 @@ resampled_x_axis = np.linspace(min(xdata), max(xdata), confidence_resolution)
 
 Note that the `confidence_resolution` must be provided to both `curve_fit` and `plot_fit`  
 
+### Specifying the Number of Standard Deviations
+
+To specify the number of standard deviations to be calculated provide the `nsigma` parameter to either the `curve_fit()` function, or directly to `confidence_interval()`. By default one standard deviation is used. The upper and lower thresholds of the resulting gaussian curve are calculated by evaluating the gaussian integral between $\mu - n\cdot \sigma$ and $\mu + n\cdot \sigma$. By substituting
+$
+    z = \frac{x - \mu} {\sigma}
+$
+the probability to fall within an n-$\sigma$ interval can be calculated as
+
+$
+    P(\mu - n\sigma < X < \mu + n\sigma) = \frac{1}{2}(\text{erf}(n/\sqrt{2}) - \text{erf}(-n/\sqrt{2})) := P_n
+$
+
+The cutoff for the resampled points above the upper threshold ($u$) and the lower threshold ($l$) then is
+
+$
+    u_n = \frac{1}{2} + \frac{P_n}{2}
+$; 
+$
+    l_n = \frac{1}{2} - \frac{P_n}{2}
+$
+
+Be aware, that
+- For $n\gtrapprox 5.5$ the error function incorrectly evaluates to $\pm 1$. Larger standard deviations will all evaluate to the same distance from the fit.
+- For large standard deviations ($\gtrapprox 3$) the approximation by resampling may require larger resampling sizes to be accurate.
+
 ## Using Plot-Fit
 
 This section instructs on the basics of using the plot fit function.
