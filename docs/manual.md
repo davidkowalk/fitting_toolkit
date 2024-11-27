@@ -95,9 +95,11 @@ Note that the `confidence_resolution` must be provided to both `curve_fit` and `
 ### Specifying the Number of Standard Deviations
 
 To specify the number of standard deviations to be calculated provide the `nsigma` parameter to either the `curve_fit()` function, or directly to `confidence_interval()`. By default one standard deviation is used. The upper and lower thresholds of the resulting gaussian curve are calculated by evaluating the gaussian integral between $\mu - n\cdot \sigma$ and $\mu + n\cdot \sigma$. By substituting
+
 $$
     z = \frac{x - \mu} {\sigma}
 $$
+
 the probability to fall within an n- $\sigma$ interval can be calculated as
 
 $$
