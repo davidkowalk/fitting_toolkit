@@ -20,12 +20,17 @@ Check out the `docs` folder for documentation and tutorials.
 ## Quick Introduction
 
 ### Requirements
-This project requires the following modules:
+This project requires the following modules along with their dependencies:
 - numpy
 - matplotlib
 - scipy
 
 It is highly recommended that the user familiarizes themselves with the functionality of these modules first. A rudimentary understanding of `numpy` and `matplotlib.pyplot` is required.
+
+To install the dependencies, first a [virtual environment](https://docs.python.org/3/library/venv.html) should be created. `requirements.txt` lists all necessary packages. Run:
+```
+pip install -r requirements.txt
+```
 
 ### Getting Started
 
