@@ -66,3 +66,7 @@ Note that the fitted function is not automatically displayed. Instead the figure
 ![Example Graph](./docs/img/example_fit.png)
 
 For a deeper explanation and tutorials please reference the [documentation](./docs/manual.md/).
+
+## Literature:
+[1] Vugrin, K. W., L. P. Swiler, R. M. Roberts, N. J. Stucky-Mack, and S. P. Sullivan (2007), Confidence region estimation techniques for nonlinear regression in groundwater flow: Three case studies, Water Resour. Res., 43, W03423, https://doi.org/10.1029/2005WR004804. 
+[2] Dennis D. Boos. "Introduction to the Bootstrap World." Statist. Sci. 18 (2) 168 - 174, May 2003. https://doi.org/10.1214/ss/1063994971 \
