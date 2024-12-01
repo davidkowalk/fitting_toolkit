@@ -159,8 +159,14 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
     
     if fig is None and ax is None:
         fig, ax = plt.subplots(**kwargs)
+        
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.grid("both")
+        ax.set_axisbelow(True)
+
     elif ax is None:
-        ax = fig.axes
+        ax = fig.axes[0] #Choose first axes object in Figure
+
     elif fig is None:
         fig = ax.get_figure()
 
@@ -168,10 +174,6 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
     ax.plot(resampled_points, model(resampled_points, *params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label)
     ax.plot(resampled_points, upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label)
     ax.plot(resampled_points, lower, color = fit_color, linewidth = 0.75, linestyle = "--")
-
-    ax.spines[["top", "right"]].set_visible(False)
-    ax.grid("both")
-    ax.set_axisbelow(True)
 
     return fig, ax
 
