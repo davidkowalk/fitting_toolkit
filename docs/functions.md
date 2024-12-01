@@ -7,7 +7,7 @@ By separating the fitting functionality from the display options, a user can uti
 
 To fit a dataset, call:
 ```python
-curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, **kwargs)
+curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, confidence_resolution: int = None, nsigma:float = 1, **kwargs)
 ```
 
 | Parameters | | |
@@ -107,7 +107,7 @@ The matplotlib objects used are returned:
 
 ## Calculate Confidence Interval for an Existing Fit
 
-Given already fitted parameters and a covariance matrix, a confidence interval can be calculated using `confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int)`
+Given already fitted parameters and a covariance matrix, a confidence interval can be calculated using `confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int, nsigma: float = 1)`
 
 | Parameters | | |
 |----------|----------|-----------------|
@@ -140,6 +140,21 @@ So that the fitted value `x[i]` are
 ```python
 print(f"f({x[i]:.2e}) = {f(x[i], *params):.2e} (+{sigma_pos[i]:.2e}/-{sigma_neg[i]:.2e})")
 ```
+
+## Generate Probability for Sigma Interval
+
+To get probability to fall into n-sigma interval call `get_sigma_probability(n: float = 1)`
+
+| Parameters | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| n        | float    | Number of sigmas in interval
+
+| Returns | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| p        | float    | Probability of falling into sigma interval. $P(\mu - n*\sigma < X < \mu + n*\sigma) $
+
 
 ## Generating Thresholds
 

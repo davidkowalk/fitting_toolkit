@@ -1,8 +1,9 @@
 from scipy.optimize import curve_fit as sc_curve_fit
+from scipy.special import erf
 import numpy as np
 from matplotlib import pyplot as plt
 
-def generate_thresholds(data, lower_frac=1/6, upper_frac=5/6):
+def generate_thresholds(data, lower_frac=0.15865, upper_frac=0.84135):
     """
     Generates two thresholds such that:
     - A fraction (lower_frac) of the data is below the lower threshold.
@@ -16,11 +17,25 @@ def generate_thresholds(data, lower_frac=1/6, upper_frac=5/6):
     Returns:
         tuple: (lower_threshold, upper_threshold)
     """
-    lower_threshold = np.percentile(data, lower_frac * 100)  # 16.67th percentile
-    upper_threshold = np.percentile(data, upper_frac * 100)  # 83.33rd percentile
+    lower_threshold = np.percentile(data, lower_frac * 100)
+    upper_threshold = np.percentile(data, upper_frac * 100)
     return lower_threshold, upper_threshold
 
-def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int) -> tuple[np.array, np.array]:
+def get_sigma_probability(n: float = 1):
+    """
+    Returns probability for event to fall into n-sigma interval assuming a gaussian distribution:
+    P(mu - n*sigma < X < mu + n*sigma)  
+
+    Args:
+        n (float): Number of sigmas in interval
+
+    Returns:
+        p (float): Probability of falling into sigma interval.
+    """
+
+    return 1/2 * (erf(n / 1.4142135623730951) - erf(-n / 1.4142135623730951))
+
+def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int, nsigma: float = 1) -> tuple[np.array, np.array]:
     """
     Computes the confidence intervals for the predictions of a model based on a set of input data.
 
@@ -33,6 +48,7 @@ def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array,
         params (numpy.ndarray): The initial model parameters.
         cov (numpy.ndarray): The covariance matrix of the model parameters, used to generate resamples.
         resamples (int): The number of resampling iterations to generate for bootstrapping.
+        nsigma (float): Number of standard deviation in interval.
 
     Returns:
         tuple: A tuple containing:
@@ -43,18 +59,22 @@ def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array,
 
     params_resamples = random.transpose()
 
+    P = get_sigma_probability(nsigma)
+    upper_threshold = 0.5 + P/2
+    lower_threshold = 0.5 - P/2
+
     lower_conf = list()
     upper_conf = list()
 
     for x in xdata:
         distr = model(x, *params_resamples)
-        interval = generate_thresholds(distr)
+        interval = generate_thresholds(distr, lower_frac = lower_threshold, upper_frac = upper_threshold)
         lower_conf.append(interval[0])
         upper_conf.append(interval[1])
     
     return np.array(lower_conf), np.array(upper_conf)
 
-def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, confidence_resolution: int = None, **kwargs) -> tuple[np.array, np.array, np.array, np.array]:
+def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, confidence_resolution: int = None, nsigma:float = 1, **kwargs) -> tuple[np.array, np.array, np.array, np.array]:
     """
     Fits a model to data and calculates confidence intervals for the fitted parameters and predictions.
 
@@ -69,6 +89,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
         yerror (numpy.ndarray, optional): The uncertainties in the observed data `ydata`. Default is None.
         resamples (int, optional): The number of resampling iterations for bootstrapping confidence intervals. Default is 5000.
         confidence_resolution (int, optional): If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
+        nsigma (float): Number of standard deviation passed to confidence_interval()
         **kwargs: Additional arguments passed to SciPy's `curve_fit` function.
 
     Returns:
@@ -86,7 +107,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
     else:
         raise ValueError("Unable to specify confidence points")
     
-    lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples)
+    lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples, nsigma)
 
     return params, cov, lower_conf, upper_conf
 
@@ -138,8 +159,14 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
     
     if fig is None and ax is None:
         fig, ax = plt.subplots(**kwargs)
+        
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.grid("both")
+        ax.set_axisbelow(True)
+
     elif ax is None:
-        ax = fig.axes
+        ax = fig.axes[0] #Choose first axes object in Figure
+
     elif fig is None:
         fig = ax.get_figure()
 
@@ -147,10 +174,6 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
     ax.plot(resampled_points, model(resampled_points, *params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label)
     ax.plot(resampled_points, upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label)
     ax.plot(resampled_points, lower, color = fit_color, linewidth = 0.75, linestyle = "--")
-
-    ax.spines[["top", "right"]].set_visible(False)
-    ax.grid("both")
-    ax.set_axisbelow(True)
 
     return fig, ax
 
