@@ -165,6 +165,11 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
     else:
         raise ValueError("Unable to specify confidence points")
     
+    if not(np.shape(resampled_points) == np.shape(lower)):
+        raise ValueError(f"x-axis does not match length of lower confidence interval\nx: {np.shape(resampled_points)}, y: {np.shape(lower)}")
+    if not(np.shape(resampled_points) == np.shape(upper)):
+        raise ValueError(f"x-axis does not match length of upper confidence interval\nx: {np.shape(resampled_points)}, y: {np.shape(upper)}")
+    
     if fig is None and ax is None:
         fig, ax = plt.subplots(**kwargs)
         
