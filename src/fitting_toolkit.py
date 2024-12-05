@@ -99,6 +99,10 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
             - lower_conf (numpy.ndarray): The lower bounds of the confidence intervals for each data point.
             - upper_conf (numpy.ndarray): The upper bounds of the confidence intervals for each data point.
     """
+
+    if not(np.shape(xdata) == np.shape(ydata)):
+        raise ValueError(f"x-data and y-data have different lengths and thus cannot be broadcast together.\nx: {np.shape(xdata)}, y: {np.shape(ydata)}")
+
     params, cov = sc_curve_fit(f = model, xdata = xdata, ydata = ydata, sigma = yerror, **kwargs)
     if confidence_resolution is None:
         resampled_points = xdata
@@ -149,6 +153,10 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
         - The top and right spines of the plot are hidden for better visualization.
         - A grid is added to the plot for improved readability.
     """
+
+    if not(np.shape(xdata) == np.shape(ydata)):
+        raise ValueError(f"x-data and y-data have different lengths and thus cannot be broadcast together.\nx: {np.shape(xdata)}, y: {np.shape(ydata)}")
+
 
     if confidence_resolution is None:
         resampled_points = xdata
