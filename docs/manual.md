@@ -84,13 +84,13 @@ For each point on the x-axis, the fitted function is calculated using all the re
 
 This method is referred to as ["parametric bootstrapping"](https://en.wikipedia.org/wiki/Bootstrapping_(statistics)) [[2]](https://doi.org/10.1214/ss/1063994971). The resampling method assumes normally distributed parameters, when errors on the fitted parameters turn out to be asymmetric the numerical approximation may prove out to be inaccurate.
 
-By default the confidence interval is estimated at each x-position of the data, however this may cause issues of resolution when data points are sparse or non-uniformly distributed along the x-axis, or it may be computationally expensive for large datasets. When a `confidence_resolution: int` parameter is set in `curve_fit`, that number of points is generated between the highest and lowest point on the x-axis and used as the x-axis instead.
+By default the confidence interval is estimated at each x-position of the data, however this may cause issues of resolution when data points are sparse or non-uniformly distributed along the x-axis, or it may be computationally expensive for large datasets. When a `model_resolution: int` parameter is set in `curve_fit`, that number of points is generated between the highest and lowest point on the x-axis and used as the x-axis instead.
 
 ```python
-resampled_x_axis = np.linspace(min(xdata), max(xdata), confidence_resolution) 
+resampled_x_axis = np.linspace(min(xdata), max(xdata), model_resolution) 
 ```
 
-Note that the `confidence_resolution` must be provided to both `curve_fit` and `plot_fit`  
+Note that the `model_resolution` must be provided to both `curve_fit` and `plot_fit`  
 
 ### Specifying the Number of Standard Deviations
 
@@ -133,7 +133,7 @@ For function documentation consult `./functions.md`.
 | lower    | np.ndarray | The lower bounds of the confidence intervals for the model predictions. 
 | upper    | np.ndarray | The upper bounds of the confidence intervals for the model predictions.
 
-If the upper and lower bounds were generated with a custom resolution, the same resolution must be provided in the `confidence_resolution` parameter.
+If the upper and lower bounds were generated with a custom resolution, the same resolution must be provided in the `model_resolution` parameter.
 
 For customization the function also provides the keywords `markersize`, `capsize`, `fit_label`, and `confidence_label`
 

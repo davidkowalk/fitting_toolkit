@@ -7,7 +7,7 @@ By separating the fitting functionality from the display options, a user can uti
 
 To fit a dataset, call:
 ```python
-curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, confidence_resolution: int = None, nsigma:float = 1, **kwargs)
+curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, model_resolution: int = None, nsigma:float = 1, **kwargs)
 ```
 
 | Parameters | | |
@@ -53,7 +53,7 @@ plt.show()
 
 The fitting toolkit ships with built-in functions for displaying data with their fitted functions and their respective confidence intervals.
 ```python
-plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None, confidence_resolution: int = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs)
+plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None, model_resolution: int = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs)
 ```
 
 | Parameters | | |
@@ -68,7 +68,7 @@ plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None
 | **Optional Arguments** |
 |xerror    | numpy.ndarray, optional | The uncertainties in the x-values of the data points. Default is None.
 |yerror    | numpy.ndarray, optional | The uncertainties in the y-values of the data points. Default is None.
-|confidence_resolution | int, optional | If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
+|model_resolution | int, optional | If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
 | **Display Options** |
 |fit_color | color, optional | color of the fitted function.
 |markersize| int, optional | The size of the markers for the data points. Default is 4.
@@ -80,7 +80,7 @@ plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None
 |**kwargs  || Additional arguments passed to `pyplot.subplots()`
 
 
-If the upper and lower bounds were generated with a custom resolution, the same resolution must be provided in the `confidence_resolution` parameter.
+If the upper and lower bounds were generated with a custom resolution, the same resolution must be provided in the `model_resolution` parameter.
 
 You may also pass keyword arguments to `matplotlib.pyplot.subplots()` via `**kwargs`. 
 For comprehensive documentation please consult [`subplots()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html), [`figure()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure) and [`add_plot()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.add_subplot.html#matplotlib.figure.Figure.add_subplot).
