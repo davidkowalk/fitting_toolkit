@@ -1,7 +1,7 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/davidkowalk/fitting_toolkit)
 ![GitHub License](https://img.shields.io/github/license/davidkowalk/fitting_toolkit)
 ![University](https://img.shields.io/badge/Univeristy_of_Bonn-brown)
-![Version](https://img.shields.io/badge/version-open%20beta-red)
+![Version](https://img.shields.io/badge/version-1.0.1-green)
 ![GitHub Repo stars](https://img.shields.io/github/stars/davidkowalk/fitting_toolkit?style=flat&label=github%20stars)
 
 
@@ -19,6 +19,28 @@ Check out the `docs` folder for documentation and tutorials.
 
 ## Quick Introduction
 
+### Installation
+
+There are multiple ways to install this package. The easiest is via pip:
+```
+pip install fitting-toolkit
+```
+If you need a specific version (for example due to compatibillity issues) you can specify the version via `fitting-toolkit==version`, e.g:
+```
+pip install fitting-toolkit==1.0.1
+```
+
+**Alternative Methods**
+
+You can also find the `fitting_toolkit.py` in the `src` folder and copy it into your project.
+
+To build the project yourself and install it, make sure `setuptools` and `wheel` are installed, then run
+```
+python3 setup.py sdist bdist_wheel
+pip install .\dist\fitting_toolkit-1.0.1-py3-none-any.whl --force-reinstall   
+pip show fitting-toolkit -v
+```
+
 ### Requirements
 This project requires the following modules along with their dependencies:
 - numpy
@@ -27,6 +49,8 @@ This project requires the following modules along with their dependencies:
 
 It is highly recommended that the user familiarizes themselves with the functionality of these modules first. A rudimentary understanding of `numpy` and `matplotlib.pyplot` is required.
 
+If you install via pip the dependencies will automatically be installed. However if the project files are used directly you may want to install dependencies manually:
+
 To install the dependencies, first a [virtual environment](https://docs.python.org/3/library/venv.html) should be created. `requirements.txt` lists all necessary packages. Run:
 ```
 pip install -r requirements.txt
@@ -34,7 +58,6 @@ pip install -r requirements.txt
 
 ### Getting Started
 
-To get started find the `fitting_toolkit.py` in the `src` folder and copy it into your project.
 You can now import the relevant functions into your code:
 ```python
 from fitting_toolkit import curve_fit, plot_fit 
