@@ -10,6 +10,12 @@ class Fit():
     """
 
     def __init__(self, model, params: np.ndarray, cov: np.ndarray, x: np.ndarray, upper: np.ndarray, lower: np.ndarray):
+        """
+        model (function): The model function that takes `xdata` and model parameters as inputs.
+        params (numpy.ndarray): The parameters for the model fit.
+        lower (numpy.ndarray): The lower bounds of the confidence intervals for the model predictions.
+        upper (numpy.ndarray): The upper bounds of the confidence intervals for the model predictions.
+        """
         self.model = model
         self.axis = x
 
@@ -134,11 +140,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
         **kwargs: Additional arguments passed to SciPy's `curve_fit` function.
 
     Returns:
-        tuple: A tuple containing:
-            - params (numpy.ndarray): The optimized parameters for the model.
-            - cov (numpy.ndarray): The covariance matrix of the optimized parameters.
-            - lower_conf (numpy.ndarray): The lower bounds of the confidence intervals for each data point.
-            - upper_conf (numpy.ndarray): The upper bounds of the confidence intervals for each data point.
+        fit (fitting_toolkit.Fit): Wrapper object containing the fitted model, fit results and confidence interval. 
     """
 
     if not(np.shape(xdata) == np.shape(ydata)):
@@ -169,14 +171,9 @@ def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, ca
     Args:
         xdata (numpy.ndarray): The x-values of the data points.
         ydata (numpy.ndarray): The y-values of the data points.
-        model (function): The model function that takes `xdata` and model parameters as inputs.
-        params (numpy.ndarray): The parameters for the model fit.
-        lower (numpy.ndarray): The lower bounds of the confidence intervals for the model predictions.
-        upper (numpy.ndarray): The upper bounds of the confidence intervals for the model predictions.
+        fit (fitting_toolkit.Fit): Wrapper object containing the fitted model, fit results and confidence interval. 
         xerror (numpy.ndarray, optional): The uncertainties in the x-values of the data points. Default is None.
         yerror (numpy.ndarray, optional): The uncertainties in the y-values of the data points. Default is None.
-        model_resolution (int, optional): If specified the confidence interval and fitted model will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
-        model_axis (np.ndarray, optional): If specified this axis is used instead of axis generated via model_resolution
         fit_color (color, optional): color of the fitted function.
         markersize (int, optional): The size of the markers for the data points. Default is 4.
         capsize (int, optional): The size of the caps on the error bars. Default is 4.

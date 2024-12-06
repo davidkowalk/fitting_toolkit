@@ -27,21 +27,28 @@ y = np.array((1, 2, 1.75, 2.25, 3))
 dy = 0.1*y+0.05
 dx = 0.1
 ```
-For a model we chose a simple linear model:
+For utility the toolkit provides a simple wrapper function for `np.array` which converts its parameters to an array:
+```python
+from fitting_toolkit import array
+x = array(1, 2, 3, 4, 5)
+y = array(1, 2, 1.75, 2.25, 3)
+```
+
+We chose a simple linear model:
 ```python
 def f(x, a, b):
     return a * x + b
 ```
 We can now fit the model to the data:
 ```python
-params, cov, lower_conf, upper_conf = curve_fit(f, x, y, yerror=dy)
+fit = curve_fit(f, x, y, yerror=dy)
 ```
-This function returns 4 arrays. First the parameters of the model, the covariance matrix of those parameters and then the lower and upper limits of the confidence interval around the fit. Note that the confidence interval is absolute. To get the error in relation to the fitted function you would need to find the difference at each point.
+This functions returns a fit object, which wraps the fitted model, the fit results and the estimated confidence interval. Until Version 1.0.1 these variables were returned separately and thus upgrading may break some scripts. Note also that the confidence interval is absolute. To get the error in relation to the fitted function you would need to find the difference at each point.
 
 The resulting fit can now be plotted. This toolkit provides a premade function to generate plots:
 ```python
 from matplotlib import pyplot as plt
-fig, ax = plot_fit(x, y, f, params, lower_conf, upper_conf, xerror=dx, yerror=dy)
+fig, ax = plot_fit(x, y, fit, xerror=dx, yerror=dy)
 plt.show()
 ```
 Note that the fitted function is not automatically displayed. Instead the figure and axis objects are returned.
@@ -73,7 +80,7 @@ Further the documentation notes:
 The `absolute_sigma` determines the interpretation of and effect the data errors have on the variance and covariance of the fitted parameters. By default the `absolute_sigma = False` which means that the errors are only used as weights, i.e., as hints how important a point should be in the least-squares computation. To compute the covariance matrix, `scipy.optimize.curve_fit` then estimates the actual error from the average deviation from the optimized curve. [(Read More Here)](https://wwwstaff.ari.uni-heidelberg.de/tsapras/pub/pycourse/15.html) When fitting data with absolute error bars as can be seen in the examples provided the `absolute_sigma` parameter should be set to `True` via the `**kwargs`.
 
 ```python
-params, cov, lower_conf, upper_conf = curve_fit(model, x, y, yerror=dy, absolute_sigma = True)
+fit = curve_fit(model, x, y, yerror=dy, absolute_sigma = True)
 ```
 
 Also note that only the y-error affects the uncertainty
@@ -91,10 +98,8 @@ This method is referred to as ["parametric bootstrapping"](https://en.wikipedia.
 By default the confidence interval is estimated at each x-position of the data, however this may cause issues of resolution when data points are sparse or non-uniformly distributed along the x-axis, or it may be computationally expensive for large datasets. When a `model_resolution: int` parameter is set in `curve_fit`, that number of points is generated between the highest and lowest point on the x-axis and used as the x-axis instead.
 
 ```python
-resampled_x_axis = np.linspace(min(xdata), max(xdata), model_resolution) 
+model_axis = np.linspace(min(xdata), max(xdata), model_resolution) 
 ```
-
-Note that the `model_resolution` must be provided to both `curve_fit` and `plot_fit`  
 
 ### Specifying the Number of Standard Deviations
 
@@ -132,12 +137,7 @@ For function documentation consult `./functions.md`.
 | **Name** | **Type**   | **Description** |
 | xdata    | np.ndarray | The x-values of the data points.
 | ydata    | np.ndarray | The y-values of the data points.
-| model    | function   | The model function that takes `xdata` and model parameters as inputs.
-| params   | np.ndarray | The parameters for the fitted model.
-| lower    | np.ndarray | The lower bounds of the confidence intervals for the model predictions. 
-| upper    | np.ndarray | The upper bounds of the confidence intervals for the model predictions.
-
-If the upper and lower bounds were generated with a custom resolution, the same resolution must be provided in the `model_resolution` parameter.
+| fit      | fitting_toolkit.Fit | Wrapper object containing model, fit results and confidence interval.
 
 For customization the function also provides the keywords `markersize`, `capsize`, `fit_label`, and `confidence_label`
 
@@ -162,12 +162,12 @@ To add a new fit to an existing graph provide the `figure` and the `axes` object
 
 ```python
 # fit two datasets to the same model separately
-params1, cov1, lower_conf1, upper_conf1 = curve_fit(f, x1, y1)
-params2, cov2, lower_conf2, upper_conf2 = curve_fit(f, x2, y2)
+fit1 = curve_fit(f, x1, y1)
+fit2 = curve_fit(f, x2, y2)
 
 # display separately fitted models in the same graph
-fig, ax = plot_fit(x1, y1, f, params1, lower_conf1, upper_conf1)
-fig, ax = plot_fit(x2, y2, f, params2, lower_conf2, upper_conf2, fig = fig, ax = ax)
+fig, ax = plot_fit(x1, y1, fit1)
+fig, ax = plot_fit(x2, y2, fit2, fig = fig, ax = ax)
 # fig and ax are returned; however, reassigning them is not required
 ```
 
@@ -179,7 +179,7 @@ In this example both datasets are fitted to the same model `f`, however this is 
 It may be required to change the color of the fitted function for clarity, as can be seen in the example above.
 
 ```python
-fig, ax = plot_fit(x, y, model, params, lower, upper, fit_color = "crimson", fit_label="data label", confidence_label="label confidence interval")
+fig, ax = plot_fit(x, y, model, fit, fit_color = "crimson", fit_label="data label", confidence_label="label confidence interval")
 ```
 
 You may set the color of the graph with the `fit_color` attribute. To label your data pass a `fit_label` and a `confidence_label` or pass `None`to remove them.

@@ -25,28 +25,31 @@ curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 50
 | Returns | | |
 |----------|----------|-----------------|
 | **Name** | **Type** | **Description** |
-| params   | np.array | List of optimal parameters. Can be separated by `p1, p1, ..., pn = params`
-| cov      | np.array | Covariance Matrix of parameters as provided by `scipy.optimize.curve_fit`. Standard deviations can be calculated by `sigma = np.sqrt(np.diagonal(cov))`
-| lower_conf | np.array | Absolute y-values of lower edge of 1-sigma confidence interval.|
-| upper_conf | np.array | Absolute y-values of upper edge of 1-sigma confidence interval.
+| fit      | fitting_toolkit.Fit | Wrapper object containing the fitted model, fit results and confidence interval. 
 
 ### Using Custom Graphics
 
 To generate your own plot you can use the returned values of `curve_fit`. Using a defined model `f(x, *params)`:
 
 ```python
-params, cov, lower_conf, upper_conf = curve_fit(f, x, y)
+fit = curve_fit(f, x, y)
 #calculate standard deviations for possible later use
-standard_deviations = np.sqrt(np.diagonal(cov))
+standard_deviations = np.sqrt(np.diagonal(fit.cov))
+
+#extract interval from fit object
+lower_conf = fit.lower
+upper_conf = fit.upper
+#get points at which confidence interval has been calculated
+model_axis = fit.axis 
 
 from matplotlib import pyplot as plt
 #scatter data
 plt.scatter(x, y)
 # plots the fitted parameters
-plt.plot(x, f(x, *params), color = "black")
+plt.plot(x, f(model_axis, *fit.params), color = "black")
 #plots the confidence interval
-plt.plot(x, lower_conf, color = "red")
-plt.plot(x, upper_conf, color = "red")
+plt.plot(model_axis, lower_conf, color = "red")
+plt.plot(model_axis, upper_conf, color = "red")
 #Display
 plt.show()
 ```
@@ -55,23 +58,19 @@ plt.show()
 
 The fitting toolkit ships with built-in functions for displaying data with their fitted functions and their respective confidence intervals.
 ```python
-plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None, model_resolution: int = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs)
+plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs)
 ```
 
 | Parameters | | |
 |----------|----------|-----------------|
 | **Name** | **Type** | **Description** |
-|xdata     | numpy.ndarray | The x-values of the data points.
-|ydata     | numpy.ndarray | The y-values of the data points.
-|model     | function | The model function that takes `xdata` and model parameters as inputs.
-|params    | numpy.ndarray | The parameters for the model fit.
-|lower     | numpy.ndarray | The lower bounds of the confidence intervals for the model predictions.
-|upper     | numpy.ndarray | The upper bounds of the confidence intervals for the model predictions.
+| xdata    | numpy.ndarray | The x-values of the data points.
+| ydata    | numpy.ndarray | The y-values of the data points.
+| fit      | fitting_toolkit.Fit | Wrapper object containing the fitted model, fit 
 | **Optional Arguments** |
-|xerror    | numpy.ndarray, optional | The uncertainties in the x-values of the data points. Default is None.
-|yerror    | numpy.ndarray, optional | The uncertainties in the y-values of the data points. Default is None.
-|model_resolution | int, optional | If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
-| model_axis | numpy.ndarray, optional | If specified this axis is used instead of axis generated via model_resolution.
+| xerror   | numpy.ndarray, optional | The uncertainties in the x-values of the data points. Default is None.
+| yerror   | numpy.ndarray, optional | The uncertainties in the y-values of the data points. Default is None.
+
 | **Display Options** |
 |fit_color | color, optional | color of the fitted function.
 |markersize| int, optional | The size of the markers for the data points. Default is 4.
