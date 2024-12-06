@@ -1,7 +1,7 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/davidkowalk/fitting_toolkit)
 ![GitHub License](https://img.shields.io/github/license/davidkowalk/fitting_toolkit)
 ![University](https://img.shields.io/badge/Univeristy_of_Bonn-brown)
-![Version](https://img.shields.io/badge/version-open%20beta-red)
+![Version](https://img.shields.io/badge/version-1.0.0-green)
 ![GitHub Repo stars](https://img.shields.io/github/stars/davidkowalk/fitting_toolkit?style=flat&label=github%20stars)
 
 
