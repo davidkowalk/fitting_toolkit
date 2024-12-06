@@ -16,7 +16,7 @@ setup(
     long_description_content_type="text/markdown",
     install_requires = requirements,
     project_urls = {
-        "Documentation": "https://github.com/davidkowalk/fitting_toolkit/blob/development/docs/manual.md",
+        "Documentation": "https://github.com/davidkowalk/fitting_toolkit/blob/Stable/docs/manual.md",
         "Source": "https://github.com/davidkowalk/fitting_toolkit/",
         "Tracker": "https://github.com/davidkowalk/fitting_toolkit/issues"
     },
