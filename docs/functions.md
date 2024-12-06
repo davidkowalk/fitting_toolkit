@@ -7,7 +7,7 @@ By separating the fitting functionality from the display options, a user can uti
 
 To fit a dataset, call:
 ```python
-curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, model_resolution: int = None, nsigma:float = 1, **kwargs)
+curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, model_resolution: int = None, model_axis = None, nsigma:float = 1, **kwargs)
 ```
 
 | Parameters | | |
@@ -18,6 +18,8 @@ curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 50
 | ydata    | np.array | The dependent data, a length M array - nominally f(xdata, ...)
 | yerror   | np.array | (optional) Determines the uncertainty in ydata. Pass absolute values.
 | resamples| int      | (optional) Number of samples to be generated in parameter space for bootstrapping.
+|model_resolution | int, optional | If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
+| model_axis | numpy.ndarray, optional | If specified this axis is used instead of axis generated via model_resolution.
 | **kwargs | any      | (optional) Parameters to be passed on to `scipy.optimize.curve_fit`
 
 | Returns | | |
@@ -69,6 +71,7 @@ plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None
 |xerror    | numpy.ndarray, optional | The uncertainties in the x-values of the data points. Default is None.
 |yerror    | numpy.ndarray, optional | The uncertainties in the y-values of the data points. Default is None.
 |model_resolution | int, optional | If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
+| model_axis | numpy.ndarray, optional | If specified this axis is used instead of axis generated via model_resolution.
 | **Display Options** |
 |fit_color | color, optional | color of the fitted function.
 |markersize| int, optional | The size of the markers for the data points. Default is 4.
