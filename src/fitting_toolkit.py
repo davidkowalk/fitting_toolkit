@@ -3,6 +3,42 @@ from scipy.special import erf
 import numpy as np
 from matplotlib import pyplot as plt
 
+class Fit():
+    """
+    Class for wrapping all relevant information for a fitted function
+    Fit(model, params, cov, x: np.ndarray, y: np.ndarray, upper: np.ndarray, lower: np.ndarray, dx: np.ndarray = None, dy: np.ndarray = None, resampled_points: np.ndarray = None)
+    """
+
+    def __init__(self, model, params: np.ndarray, cov: np.ndarray, x: np.ndarray, upper: np.ndarray, lower: np.ndarray):
+        self.model = model
+        self.axis = x
+
+        self.upper = upper
+        self.lower = lower 
+
+        self.params = params
+        self.cov = cov
+
+
+#===================
+# General Utilities
+#===================
+
+def array(*x):
+    """
+    Takes list as arguments and creates numpy array.
+
+    Args:
+        *x: Elements of array
+
+    Returns:
+        numpy.array(x)
+
+    Example:
+        array(2, 1, 4, 3) is eqivalent to numpy.array([2, 1, 4, 3])
+    """
+    return np.array(x)
+
 def generate_thresholds(data, lower_frac=0.15865, upper_frac=0.84135):
     """
     Generates two thresholds such that:
@@ -34,6 +70,10 @@ def get_sigma_probability(n: float = 1):
     """
 
     return 1/2 * (erf(n / 1.4142135623730951) - erf(-n / 1.4142135623730951))
+
+# =========================
+#  Package Functionalities
+# =========================
 
 def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int, nsigma: float = 1) -> tuple[np.array, np.array]:
     """
@@ -116,9 +156,9 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
     
     lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples, nsigma)
 
-    return params, cov, lower_conf, upper_conf
+    return Fit(model, params, cov, resampled_points, upper_conf, lower_conf)
 
-def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None, model_resolution: int = None, model_axis = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
+def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
     """
     Plots the model fit to the data along with its confidence intervals.
 
@@ -162,19 +202,10 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
         raise ValueError(f"x-data and y-data have different lengths and thus cannot be broadcast together.\nx: {np.shape(xdata)}, y: {np.shape(ydata)}")
 
 
-    if not model_axis is None:
-         resampled_points = model_axis
-    elif model_resolution is None:
-        resampled_points = xdata
-    elif model_resolution > 0:
-        resampled_points = np.linspace(min(xdata), max(xdata), model_resolution) 
-    else:
-        raise ValueError("Unable to specify confidence points")
-    
-    if not(np.shape(resampled_points) == np.shape(lower)):
-        raise ValueError(f"x-axis does not match length of lower confidence interval\nx: {np.shape(resampled_points)}, y: {np.shape(lower)}")
-    if not(np.shape(resampled_points) == np.shape(upper)):
-        raise ValueError(f"x-axis does not match length of upper confidence interval\nx: {np.shape(resampled_points)}, y: {np.shape(upper)}")
+    if not(np.shape(fit.axis) == np.shape(fit.lower)):
+        raise ValueError(f"x-axis does not match length of lower confidence interval\nx: {np.shape(fit.axis)}, y: {np.shape(fit.lower)}")
+    if not(np.shape(fit.axis) == np.shape(fit.upper)):
+        raise ValueError(f"x-axis does not match length of upper confidence interval\nx: {np.shape(fit.axis)}, y: {np.shape(fit.upper)}")
     
     if fig is None and ax is None:
         fig, ax = plt.subplots(**kwargs)
@@ -190,9 +221,9 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
         fig = ax.get_figure()
 
     ax.errorbar(xdata, ydata, yerr = yerror, xerr = xerror, fmt=".", linestyle = "", color = fit_color, capsize=capsize, markersize = markersize)
-    ax.plot(resampled_points, model(resampled_points, *params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label)
-    ax.plot(resampled_points, upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label)
-    ax.plot(resampled_points, lower, color = fit_color, linewidth = 0.75, linestyle = "--")
+    ax.plot(fit.axis, fit.model(fit.axis, *fit.params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label)
+    ax.plot(fit.axis, fit.upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label)
+    ax.plot(fit.axis, fit.lower, color = fit_color, linewidth = 0.75, linestyle = "--")
 
     return fig, ax
 
