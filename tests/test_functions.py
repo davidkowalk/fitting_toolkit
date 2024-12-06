@@ -48,7 +48,8 @@ class UnitTests(unittest.TestCase):
 
         #simulate Data
         y = m*x + c + np.random.normal(loc = 0, scale = dy, size = n)
-        params, cov, lower, upper = curve_fit(model, x, y, yerror=None, nsigma=1, absolute_sigma = True)
+        fit = curve_fit(model, x, y, yerror=None, nsigma=1, absolute_sigma = True)
+        params, cov, lower, upper = fit.params, fit.cov, fit.lower, fit.upper
         #y_fit = model(x, *params)
 
         diff = (np.abs(m  - params[0]), np.abs(c - params[1]))
@@ -57,5 +58,5 @@ class UnitTests(unittest.TestCase):
         self.assertLessEqual(diff[0], sigmas[0]*2)
         self.assertLessEqual(diff[1], sigmas[1]*2)
 
-        fig, ax = plot_fit(x, y, model, params, lower, upper, yerror=dy)
+        fig, ax = plot_fit(x, y, fit, yerror=dy)
         fig.savefig("./tests/plot.png")

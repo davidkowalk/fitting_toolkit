@@ -3,21 +3,22 @@ This is an example model for a quick experiment on a physical pendulum.
 len describes the measured pendulum length in cm, t the period length in seconds.
 """
 import numpy as np
-from fitting_toolkit import *
+from fitting_toolkit import curve_fit, plot_fit, array
+from matplotlib import pyplot as plt
 
 def model(l, a, b):
     return a*np.sqrt(l) + b 
 
-len = np.array((60, 50, 40, 30))
-t = np.array((13.14, 12.35, 10.70, 9.3))/10
+len = array(60, 50, 40, 30)
+t = array(13.14, 12.35, 10.70, 9.3)/10
 
 dlen = 0.5
 dt = 0.5/10
 
 confidence_resolution = 100
 
-params, cov, lower_conf, upper_conf = curve_fit(model, len, t, yerror=dt, confidence_resolution = confidence_resolution, absolute_sigma = True)
-fig, ax = plot_fit(len, t, model, params, lower_conf, upper_conf, xerror=dlen, yerror=dt, confidence_resolution = confidence_resolution)
+fit = curve_fit(model, len, t, yerror=dt, model_resolution = confidence_resolution, absolute_sigma = True)
+fig, ax = plot_fit(len, t, fit, xerror=dlen, yerror=dt)
 ax.set_xlabel("Pendulum Length / cm")
 ax.set_ylabel("Oscillation Time T / s")
 plt.show()
