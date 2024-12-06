@@ -88,7 +88,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
         ydata (numpy.ndarray): The observed data corresponding to `xdata`.
         yerror (numpy.ndarray, optional): The uncertainties in the observed data `ydata`. Default is None.
         resamples (int, optional): The number of resampling iterations for bootstrapping confidence intervals. Default is 5000.
-        model_resolution (int, optional): If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
+        model_resolution (int, optional): If specified the confidence interval and model will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
         model_axis (np.ndarray, optional): If specified this axis is used instead of axis generated via model_resolution
         nsigma (float): Number of standard deviation passed to confidence_interval()
         **kwargs: Additional arguments passed to SciPy's `curve_fit` function.
@@ -118,7 +118,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
 
     return params, cov, lower_conf, upper_conf
 
-def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None, model_resolution: int = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
+def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = None, model_resolution: int = None, model_axis = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
     """
     Plots the model fit to the data along with its confidence intervals.
 
@@ -135,7 +135,8 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
         upper (numpy.ndarray): The upper bounds of the confidence intervals for the model predictions.
         xerror (numpy.ndarray, optional): The uncertainties in the x-values of the data points. Default is None.
         yerror (numpy.ndarray, optional): The uncertainties in the y-values of the data points. Default is None.
-        model_resolution (int, optional): If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
+        model_resolution (int, optional): If specified the confidence interval and fitted model will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
+        model_axis (np.ndarray, optional): If specified this axis is used instead of axis generated via model_resolution
         fit_color (color, optional): color of the fitted function.
         markersize (int, optional): The size of the markers for the data points. Default is 4.
         capsize (int, optional): The size of the caps on the error bars. Default is 4.
@@ -161,7 +162,9 @@ def plot_fit(xdata, ydata, model, params, lower, upper, xerror = None, yerror = 
         raise ValueError(f"x-data and y-data have different lengths and thus cannot be broadcast together.\nx: {np.shape(xdata)}, y: {np.shape(ydata)}")
 
 
-    if model_resolution is None:
+    if not model_axis is None:
+         resampled_points = model_axis
+    elif model_resolution is None:
         resampled_points = xdata
     elif model_resolution > 0:
         resampled_points = np.linspace(min(xdata), max(xdata), model_resolution) 
