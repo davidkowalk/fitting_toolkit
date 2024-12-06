@@ -34,7 +34,7 @@ pip install fitting-toolkit==1.0.1
 
 You can find all releases here: 
 
-[![Download Button](https://gist.github.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/download.svg)](https://github.com/davidkowalk/fitting_toolkit/releases)
+[<img src="https://gist.github.com/cxmeel/0dbc95191f239b631c3874f4ccf114e2/raw/download.svg" alt="Releases" height="48" />](https://github.com/davidkowalk/fitting_toolkit/releases)
 
 
 After downloading the desired version you can find the `fitting_toolkit.py` in the `src` folder and copy it into your project.
