@@ -163,3 +163,4 @@ cython_debug/
 
 docs/stats.csv
 tests/plot.png
+pip_token
