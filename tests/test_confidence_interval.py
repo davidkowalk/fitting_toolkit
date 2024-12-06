@@ -2,9 +2,9 @@ import unittest
 import numpy as np
 from src.fitting_toolkit import get_sigma_probability, confidence_interval
 
-def mock_model(x, *params):
+def mock_model(x, m, b):
     # Linear model: y = m * x + b
-    return params[0] * x + params[1]
+    return m * x + b
 
 
 class TestConfidenceInterval(unittest.TestCase):
@@ -12,8 +12,8 @@ class TestConfidenceInterval(unittest.TestCase):
         # Setup for the tests
         self.model = mock_model
         self.xdata = np.array([1, 2, 3, 4, 5])
-        self.params = np.array([2, 1])  # Linear: y = 2x + 1
-        self.cov = np.array([[0.1, 0], [0, 0.1]])  # Small variance
+        self.params = np.array([2, 1]) 
+        self.cov = np.array([[0.1, 0], [0, 0.1]])
         self.resamples = 1000
         self.nsigma = 1
 
@@ -58,6 +58,43 @@ class TestConfidenceInterval(unittest.TestCase):
         lower, upper = confidence_interval(self.model, large_xdata, self.params, self.cov, resamples, self.nsigma)
         self.assertEqual(len(lower), len(large_xdata))
         self.assertEqual(len(upper), len(large_xdata))
+
+    def test_statistical_accuracy_with_resampling(self):
+        """
+        Test whether the expected number of resampled parameters
+        produce points that fall within the calculated confidence interval.
+        """
+
+        # Setup
+        np.random.seed(581) 
+        true_params = np.array([2, 1])
+        cov = np.array([[0.1, 0.05], [0.05, 0.1]])
+
+        xdata = np.linspace(0, 10, 50)
+        resamples = 500
+        nsigma = 1
+
+        #Compute confidence intervals
+        lower, upper = confidence_interval(self.model, xdata, true_params, cov, resamples, nsigma)
+
+        # Resample parameters
+        resampled_params = np.random.multivariate_normal(true_params, cov, resamples)
+
+        # Check how many resampled parameters produce points inside interval
+        in_interval = 0
+        total_points = len(xdata) * resamples
+
+        for params in resampled_params:
+            predictions = self.model(xdata, *params)
+            in_interval += np.sum((predictions >= lower) & (predictions <= upper))
+
+        #Compute the coverage
+        empirical_coverage = in_interval / total_points
+        expected_coverage = get_sigma_probability(nsigma)
+
+        #Compare Coverage
+        tolerance = 0.02
+        self.assertAlmostEqual(empirical_coverage, expected_coverage, delta=tolerance, msg=f"\nEmpirical coverage {empirical_coverage:.3f} does not match expected {expected_coverage:.3f}")
 
 if __name__ == '__main__':
     unittest.main()
