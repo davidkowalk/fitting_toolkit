@@ -8,7 +8,11 @@ These instructions provide a basic introduction on how to use the toolkit and la
 
 This section covers the use of the toolkit's functions as intended, which will cover most use cases.
 
-To get started find the `fitting_toolkit.py` in the `src` folder and copy it into your project.
+To get started install the package via
+```
+pip install fitting-toolkit
+```
+or copy `fitting_toolkit.py` into your working directory.
 You can now import the relevant functions into your code:
 ```python
 from fitting_toolkit import curve_fit, plot_fit 
