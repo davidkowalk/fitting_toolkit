@@ -1,5 +1,7 @@
+<!--This document is mostly redundant with README, the contents here are pulled for pip rehosting-->
+
 ![GitHub License](https://img.shields.io/github/license/davidkowalk/fitting_toolkit)
-![Version](https://img.shields.io/badge/version-1.0.2-green)
+![GitHub Release](https://img.shields.io/github/v/release/davidkowalk/fitting_toolkit?color=green)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/davidkowalk/fitting_toolkit)
 ![GitHub Repo stars](https://img.shields.io/github/stars/davidkowalk/fitting_toolkit?style=flat&label=github%20stars)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/fitting-toolkit?label=pip%20installs)\
@@ -9,14 +11,9 @@
 
 # Fitting Toolkit
 This toolkit aims at providing flexible and powerful tools for data analysis and modelling, but remain easy to use.
-
-Here, I aim to strike a balance between the two extremes in this field. On one side are toolkits such as Kafe2, which prioritize ease of use and convenience but limit user control over the output, often resulting in highly specialized graphics that frequently do not meet standards required for publication without considerable effort. On the other side are data analysis systems like CERN's ROOT, which offer exceptional speed and capability but come with a steep learning curve and often exceed the requirements of most experiments.
-
 This toolkit is aimed primarily at my peers, students of physics at the university of bonn, and to a degree at professionals within my field. I am optimizing this toolkit to be used on the scale typical of lab courses and homework assignments but if possible it should be powerful enough to run decently sized datasets on an average laptop.
 
-This toolkit wraps numpy for fast data management and manipulation, scipy for `curve_fit()` and matplotlib for display options.
-
-Check out the `docs` folder for documentation and tutorials.
+This package wraps numpy for fast data management and manipulation, scipy for `curve_fit()` and matplotlib for display options.
 
 ## Quick Introduction
 
@@ -33,11 +30,7 @@ pip install fitting-toolkit==1.0.1
 
 ### Alternative Installation Methods
 
-You can find all releases here: 
-
-<a href= "https://github.com/davidkowalk/fitting_toolkit/releases">![Download](./docs/img/download.svg)</a>
-
-To install the current development version ahead of releases check out the development branches.
+To install the current development version ahead of releases check out the development branches on GitHub.
 | Branch          | Purpose
 |-----------------|-------------
 | development-1.0 | Bug fixes and documentation adding onto version 1.0.1
@@ -76,7 +69,7 @@ import numpy as np
 ```
 The `curve_fit` requires numpy-arrays. Therefore numpy has to be imported as well.
 
-We can now start by simply defining our data.
+We can now start by defining our data.
 ```python
 x = np.array((1, 2, 3, 4, 5))
 y = np.array((1, 2, 1.75, 2.25, 3))
@@ -102,10 +95,4 @@ plt.show()
 ```
 Note that the fitted function is not automatically displayed. Instead the figure and axis-objects are returned.
 
-![Example Graph](./docs/img/example_fit.png)
-
-For a deeper explanation and tutorials please reference the [documentation](./docs/manual.md/).
-
-## Literature:
-[1] Vugrin, K. W., L. P. Swiler, R. M. Roberts, N. J. Stucky-Mack, and S. P. Sullivan (2007), Confidence region estimation techniques for nonlinear regression in groundwater flow: Three case studies, Water Resour. Res., 43, W03423, https://doi.org/10.1029/2005WR004804. \
-[2] Dennis D. Boos. "Introduction to the Bootstrap World." Statist. Sci. 18 (2) 168 - 174, May 2003. https://doi.org/10.1214/ss/1063994971
+![Example Graph](https://github.com/davidkowalk/fitting_toolkit/blob/Stable/docs/img/example_fit.png?raw=true)
