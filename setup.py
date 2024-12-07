@@ -9,17 +9,23 @@ with open("./requirements.txt", encoding="utf-16") as f:
 
 setup(
     name = "fitting_toolkit",
-    version = "1.0.1",
+    version = "1.0.2",
     package_dir={"": "src"},
     packages=[""],
     long_description=description,
     long_description_content_type="text/markdown",
     install_requires = requirements,
     project_urls = {
-        "Documentation": "https://github.com/davidkowalk/fitting_toolkit/blob/development/docs/manual.md",
+        "Documentation": "https://github.com/davidkowalk/fitting_toolkit/blob/Stable/docs/manual.md",
         "Source": "https://github.com/davidkowalk/fitting_toolkit/",
         "Tracker": "https://github.com/davidkowalk/fitting_toolkit/issues"
     },
+    classifiers=[
+        "Intended Audience :: Students / Scientists",
+        "Programming Language Python:: Python",
+        "Programming Language Python:: Python :: 3",
+        "Natural Language :: English"
+    ],
     license="MIT",
     description="Easy and Flexible Curve Fitting",
     url="https://github.com/davidkowalk/fitting_toolkit/"
