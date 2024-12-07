@@ -1,8 +1,9 @@
-![GitHub commit activity](https://img.shields.io/github/commit-activity/m/davidkowalk/fitting_toolkit)
 ![GitHub License](https://img.shields.io/github/license/davidkowalk/fitting_toolkit)
-![University](https://img.shields.io/badge/Univeristy_of_Bonn-brown)
 ![Version](https://img.shields.io/badge/version-1.0.1-green)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/davidkowalk/fitting_toolkit)
 ![GitHub Repo stars](https://img.shields.io/github/stars/davidkowalk/fitting_toolkit?style=flat&label=github%20stars)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/fitting-toolkit?label=pip%20installs)\
+![University](https://img.shields.io/badge/Univeristy_of_Bonn-brown)
 
 
 
