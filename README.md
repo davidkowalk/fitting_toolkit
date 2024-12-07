@@ -37,13 +37,18 @@ You can find all releases here:
 
 <a href= "https://github.com/davidkowalk/fitting_toolkit/releases">![Download](./docs/img/download.svg)</a>
 
+To install the current development version ahead of releases check out the development branches.
+| Branch          | Purpose
+|-----------------|-------------
+| development-1.0 | Bug fixes and documentation adding onto version 1.0.1
+| development-1.1 | Development of new major features
 
 After downloading the desired version you can find the `fitting_toolkit.py` in the `src` folder and copy it into your project.
 
 To build the project yourself and install it, make sure `setuptools` and `wheel` are installed, then run
 ```
 python3 setup.py sdist bdist_wheel
-pip install .\dist\fitting_toolkit-1.0.1-py3-none-any.whl --force-reinstall   
+pip install --no-deps --force-reinstall ./dist/fitting_toolkit-VERSION_NUMBER-py3-none-any.whl 
 pip show fitting-toolkit -v
 ```
 
