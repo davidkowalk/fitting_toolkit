@@ -1,7 +1,7 @@
 from setuptools import setup
 #run with python3 setup.py sdist bdist_wheel
 
-with open("./README.md") as f:
+with open("./package_description.md") as f:
     description = f.read()
 
 with open("./requirements.txt", encoding="utf-16") as f:
