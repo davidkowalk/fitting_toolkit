@@ -21,9 +21,8 @@ setup(
         "Tracker": "https://github.com/davidkowalk/fitting_toolkit/issues"
     },
     classifiers=[
-        "Intended Audience :: Students / Scientists",
-        "Programming Language Python:: Python",
-        "Programming Language Python:: Python :: 3",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3",
         "Natural Language :: English"
     ],
     license="MIT",
