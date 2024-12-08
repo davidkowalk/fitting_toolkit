@@ -25,21 +25,14 @@ $$
 When also considering the x-uncertainty the calculations become more complicated. [citation needed]
 
 $$
-p(x_i, y_i |\theta)_{f, \sigma_{x,i} \sigma{y_i}} = \int_{-\infty}^{\infty} du_i 
-\frac{1}{2\pi\sigma_{y,i}\sigma_{x,i}}
-
-\exp\left(-\frac{(y_i-f(u_i, \theta))^2}{2\sigma_{y,i}^2} -\frac{(x_i - u_i)^2}{2\sigma_{x,i}^2}\right)
+p(x_i, y_i |\theta)_{f, \sigma_{x,i} \sigma{y_i}} = \int_{-\infty}^{\infty} du_i \frac{1}{2\pi\sigma_{y,i}\sigma_{x,i}}\exp\left(-\frac{(y_i-f(u_i, \theta))^2}{2\sigma_{y,i}^2} -\frac{(x_i - u_i)^2}{2\sigma_{x,i}^2}\right)
 $$
 
 Where $u_i$ represents the "true" value of x which is measured with a defined uncertainty. Internally this integration is performed by `scipy.optimize.quad`
 
 It is often advantegious to take the natural logarithm of these functions. When only considering x-errors this simplifies to:
 
-$$
--\ln p(y_i | \theta)_{f, \sigma_y^i} =
-\frac{1}{2}\ln\left({{2\pi\sigma_{y,i}^2}}\right) +
-\frac{1}{2} \left(\frac{y_i-f(x_i, \theta)}{\sigma_{y,i}}\right)^2
-$$
+$$-\ln p(y_i | \theta)_{f, \sigma_y^i} =\frac{1}{2}\ln\left({{2\pi\sigma_{y,i}^2}}\right) + \frac{1}{2} \left(\frac{y_i-f(x_i, \theta)}{\sigma_{y,i}}\right)^2$$
 
 This simplification does not work when considering uncertainties in x as the lofarithm does not commutate with the integral as it is not a linear operator.
 
@@ -52,6 +45,7 @@ p(x, y|\theta) = \prod_i p(x_i, y_i | \theta)
 $$
 
 It follows, that the logarithmic density is
+
 $$
 \ln p(x, y|\theta) = \sum_i \ln p(x_i, y_i | \theta)
 $$
@@ -73,12 +67,12 @@ Internally this is handled by `scipy.minimize` which is documented [here](https:
 The covariance matrix of the fitted parameters is equivalent to the inverse of the hessian matrix [1, p. 6181] if:
 
 1. The parameters are normally distributed around the fit. If this is violated the hessian matrix provides a good local approximation, but does not strictly converge onto the true values.
-2. The cost function ($-\ln p(x, y|\theta)$) is quadratic in $\theta$. However Thacker notes
+2. The cost function ( $-\ln p(x, y|\theta)$ ) is quadratic in $\theta$. However Thacker notes
 
     >As long as the model is not too nonlinear, the inverse of the Hessian should provide a good approximation to the error-covariance matrix even in the nonlinear case. [1, p. 6177/6178]
 
 3. The Hessian matrix must be invertible. This requires:
-    1. The cost function ($-\ln p(x, y|\theta)$) must have a unique local minimum in $\theta$.
+    1. The cost function ( $-\ln p(x, y|\theta)$ ) must have a unique local minimum in $\theta$.
     2. The data must contain sufficient information to estimate all the parameters (no singularities in the Hessian).
 
 4. The data must be sufficiently informative to constrain the model parameters. If the hessian is near a singularity the estimate becomes unreliable. [1, p. 6182]
