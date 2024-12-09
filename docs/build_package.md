@@ -1,4 +1,4 @@
-# Instructions for Building Package
+# Instructions for Building the Package
 
 When actively contributing to the package or wanting to use the newest features before a public release you may want to build the package locally. You can download the desired branch on [GitHub](https://github.com/davidkowalk/fitting_toolkit/branches) or browse the [forks](https://github.com/davidkowalk/fitting_toolkit/forks).
 | Branch          | Purpose

@@ -16,13 +16,13 @@ $$
 p(x)_{\mu, \sigma} = \frac{1}{\sqrt{2\pi\sigma^2}} \exp\left(-\frac{1}{2} \left(\frac{x-\mu}{\sigma}\right)^2\right)
 $$
 
-From that assuming the mean is defined by the fitted function $f$ and using the y-uncertainty, compare the probabillity density for a point at y given the paramteters $\theta$ [citation needed]:
+From that assuming the mean is defined by the fitted function $f$ and using the y-uncertainty, compare the probabillity density for a point at y given the paramteters $\theta$ [1, p. 1255]:
 
 $$
 p(y_i | \theta)_{f, \sigma_y^i} = \frac{1}{\sqrt{2\pi\sigma_{y,i}^2}} \exp\left(-\frac{1}{2} \left(\frac{y_i-f(x_i, \theta)}{\sigma_{y,i}}\right)^2\right)
 $$
 
-When also considering the x-uncertainty the calculations become more complicated. [citation needed]
+When also considering the x-uncertainty the calculations become more complicated. [1, p. 1256]
 
 $$
 p(x_i, y_i |\theta)_{f, \sigma_{x,i} \sigma{y_i}} = \int_{-\infty}^{\infty} du_i \frac{1}{2\pi\sigma_{y,i}\sigma_{x,i}}\exp\left(-\frac{(y_i-f(u_i, \theta))^2}{2\sigma_{y,i}^2} -\frac{(x_i - u_i)^2}{2\sigma_{x,i}^2}\right)
@@ -64,23 +64,23 @@ Internally this is handled by `scipy.minimize` which is documented [here](https:
 
 ## 4. Finding the Covariance Matrix
 
-The covariance matrix of the fitted parameters is equivalent to the inverse of the hessian matrix [1, p. 6181] if:
+The covariance matrix of the fitted parameters is equivalent to the inverse of the hessian matrix [2, p. 6181] if:
 
 1. The parameters are normally distributed around the fit. If this is violated the hessian matrix provides a good local approximation, but does not strictly converge onto the true values.
 2. The cost function ( $-\ln p(x, y|\theta)$ ) is quadratic in $\theta$. However Thacker notes
 
-    >As long as the model is not too nonlinear, the inverse of the Hessian should provide a good approximation to the error-covariance matrix even in the nonlinear case. [1, p. 6177/6178]
+    >As long as the model is not too nonlinear, the inverse of the Hessian should provide a good approximation to the error-covariance matrix even in the nonlinear case. [2, p. 6177/6178]
 
 3. The Hessian matrix must be invertible. This requires:
     1. The cost function ( $-\ln p(x, y|\theta)$ ) must have a unique local minimum in $\theta$.
     2. The data must contain sufficient information to estimate all the parameters (no singularities in the Hessian).
 
-4. The data must be sufficiently informative to constrain the model parameters. If the hessian is near a singularity the estimate becomes unreliable. [1, p. 6182]
+4. The data must be sufficiently informative to constrain the model parameters. If the hessian is near a singularity the estimate becomes unreliable. [2, p. 6182]
 
 5. The statistical model used must correctly describe the data-generating process. Misspecification of the model can lead to biased estimates, and the Hessian may not accurately represent the true parameter uncertainty.
 
 The result object produced by `scipy.minimize` already contains the inverse hessian matrix and thus this can simply be returned.
 
 # Literature
-
-[1] “The Role of the Hessian Matrix in Fitting Models to Measurements.” Journal of geophysical research JGR ; publ. by American Geophysical Union 94.C5 (1989): 6177–6196. Web. [Paywalled Version]( https://doi.org/10.1029/JC094iC05p06177) (doi: /10.1029/JC094iC05p06177)
+[1] Naylor, T. and Jeffries, R.D., 2006. A maximum-likelihood method for fitting colour–magnitude diagrams. Monthly Notices of the Royal Astronomical Society, 373(3), pp.1251-1263. [Full Text](https://doi.org/10.1111/j.1365-2966.2006.11099.x) (doi: 10.1111/j.1365-2966.2006.11099.x)
+[2] “The Role of the Hessian Matrix in Fitting Models to Measurements.” Journal of geophysical research JGR ; publ. by American Geophysical Union 94.C5 (1989): 6177–6196. Web. [Paywalled Version]( https://doi.org/10.1029/JC094iC05p06177) (doi: /10.1029/JC094iC05p06177)
