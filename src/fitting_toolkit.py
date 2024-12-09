@@ -3,6 +3,8 @@ from scipy.special import erf
 import numpy as np
 from matplotlib import pyplot as plt
 
+from fit import curve_fit_mle
+
 class Fit():
     """
     Class for wrapping all relevant information for a fitted function
@@ -120,7 +122,8 @@ def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array,
     
     return np.array(lower_conf), np.array(upper_conf)
 
-def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, model_resolution: int = None, model_axis = None, nsigma:float = 1, **kwargs) -> tuple[np.array, np.array, np.array, np.array]:
+def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "scipy",
+              resamples = 5000, model_resolution: int = None, model_axis = None, nsigma:float = 1, **kwargs) -> tuple[np.array, np.array, np.array, np.array]:
     """
     Fits a model to data and calculates confidence intervals for the fitted parameters and predictions.
 
@@ -146,7 +149,13 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
     if not(np.shape(xdata) == np.shape(ydata)):
         raise ValueError(f"x-data and y-data have different lengths and thus cannot be broadcast together.\nx: {np.shape(xdata)}, y: {np.shape(ydata)}")
 
-    params, cov = sc_curve_fit(f = model, xdata = xdata, ydata = ydata, sigma = yerror, **kwargs)
+    if method == "scipy":
+        params, cov = sc_curve_fit(f = model, xdata = xdata, ydata = ydata, sigma = yerror, **kwargs)
+    elif method == "mle":
+        params, cov = curve_fit_mle(model = model, xdata=xdata, ydata=ydata, yerror=yerror, **kwargs)
+    else:
+        raise ValueError("Invalid method. Method must either be \"scipy\" for non linear leasts squares or \"mle\" for maximum likelyhood estimate.")
+
     if not model_axis is None:
          resampled_points = model_axis
     elif model_resolution is None:
