@@ -1,4 +1,4 @@
-from scipy.optimize import curve_fit as sc_curve_fit
+from scipy.optimize import curve_fit as curve_fit_scipy
 from scipy.special import erf
 import numpy as np
 from matplotlib import pyplot as plt
@@ -26,6 +26,36 @@ class Fit():
 
         self.params = params
         self.cov = cov
+
+    def __str__(self):
+        str_repr = f"""Fit(
+    model = {self.model.__code__.co_name}({", ".join(self.model.__code__.co_varnames)})
+    params = ({", ".join(self.params.astype(str))})
+    cov = {'\n\t' + str(self.cov).replace('\n', '\n\t')}
+    axis = array{str(np.shape(self.axis))}
+    lower = array{str(np.shape(self.lower))}
+    upper = array{str(np.shape(self.upper))}
+)"""
+        return str_repr
+    
+    def __repr__(self):
+        return self.__str__()
+    
+    def reduced_chi_sqrd(self, x: np.ndarray, y:np.ndarray):
+        """
+        Calculates the reduced Chi-Squared statistic for fit.
+
+        Args:
+            x (np.ndarray): list of x-data
+            y (np.ndarray): list of y-data
+
+        Returns:
+            reduced_chi_sqrd (float)
+        """
+        residuals = y - self.model(x, *self.params)
+        nu = len(x) - self.model.__code__.co_argcount + 1
+
+        return np.dot(np.transpose(residuals), residuals)/nu
 
 
 #===================
@@ -150,7 +180,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
         raise ValueError(f"x-data and y-data have different lengths and thus cannot be broadcast together.\nx: {np.shape(xdata)}, y: {np.shape(ydata)}")
 
     if method == "scipy":
-        params, cov = sc_curve_fit(f = model, xdata = xdata, ydata = ydata, sigma = yerror, **kwargs)
+        params, cov = curve_fit_scipy(f = model, xdata = xdata, ydata = ydata, sigma = yerror, **kwargs)
     elif method == "mle":
         params, cov = curve_fit_mle(model = model, xdata=xdata, ydata=ydata, yerror=yerror, **kwargs)
     else:
