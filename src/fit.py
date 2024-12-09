@@ -55,7 +55,7 @@ def neg_log_likelyhood(theta, model, x, y, yerror, xerror = None):
 
     return np.sum(neg_log_likelihood_per_point_xyerr(model, theta, x, y, xerror, yerror))
 
-def curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = None, xerror = None):
+def curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = None, xerror = None, **kwargs):
     """
     Fits model curve to (xdata, ydata) using maximum likelyhood estimate.
 
@@ -69,6 +69,7 @@ def curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = Non
         yerror (np.ndarray / float): standard deviation of y-values
         xerror (np.ndarray / float, optional): standard deviation of x-values
         theta_0 (np.ndarray, optional): Initial guess of parameters. If not provided all paramters are initially set to zero
+        **kwargs (optional): additional key word arguments passed onto scipy.optimize.minimize
 
     Returns:
         params (np.ndarray): Optimal Parameters
@@ -78,7 +79,7 @@ def curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = Non
     if theta_0 == None:
         theta_0 = np.zeros(model.__code__.co_argcount -1)
 
-    result = minimize(neg_log_likelyhood, theta_0, args=(model, xdata, ydata, yerror, xerror))
+    result = minimize(neg_log_likelyhood, theta_0, args=(model, xdata, ydata, yerror, xerror), **kwargs)
     params = result.x
     cov = result.hess_inv
 
