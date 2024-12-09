@@ -117,8 +117,8 @@ def confidence_interval(model, xdata: np.array, params: np.array, cov: np.array,
     """
     Computes the confidence intervals for the predictions of a model based on a set of input data.
 
-    The function performs bootstrapping by generating multiple resamples of the model parameters
-    and computes the lower and upper thresholds for the confidence intervals at each data point.
+    The function performs parametric bootstrapping by generating multiple resamples of the model parameters
+    and computes the lower and upper thresholds for the confidence intervals at each axis point.
 
     Args:
         model (function): The model function that takes input data and model parameters.
@@ -166,6 +166,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
         xdata (numpy.ndarray): The input data to fit the model to.
         ydata (numpy.ndarray): The observed data corresponding to `xdata`.
         yerror (numpy.ndarray, optional): The uncertainties in the observed data `ydata`. Default is None.
+        method (str, optional): Select method used for fitting the model. Must either be \"scipy\" for scipy's builtin least squares fit or \"mle\" for maximum likelyhood estimation.
         resamples (int, optional): The number of resampling iterations for bootstrapping confidence intervals. Default is 5000.
         model_resolution (int, optional): If specified the confidence interval and model will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
         model_axis (np.ndarray, optional): If specified this axis is used instead of axis generated via model_resolution
@@ -174,6 +175,9 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
 
     Returns:
         fit (fitting_toolkit.Fit): Wrapper object containing the fitted model, fit results and confidence interval. 
+
+    When using \"scipy\" method x-errors are not used, y-errors are optional.
+    When using \"mle\" method y-errors are required, x-errors are optional. Note that using xerrors is considerably more computationally expensive.
     """
 
     if not(np.shape(xdata) == np.shape(ydata)):
@@ -182,6 +186,11 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
     if method == "scipy":
         params, cov = curve_fit_scipy(f = model, xdata = xdata, ydata = ydata, sigma = yerror, **kwargs)
     elif method == "mle":
+        if yerror is None:
+            raise ValueError("When using maximum likelyhood estimation y-errors are required.")
+        if 0 in yerror:
+            raise ValueError("Error cannot be 0.")
+        
         params, cov = curve_fit_mle(model = model, xdata=xdata, ydata=ydata, yerror=yerror, **kwargs)
     else:
         raise ValueError("Invalid method. Method must either be \"scipy\" for non linear leasts squares or \"mle\" for maximum likelyhood estimate.")

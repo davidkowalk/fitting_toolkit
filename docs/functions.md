@@ -2,12 +2,13 @@
 # Code Documentation
 
 By separating the fitting functionality from the display options, a user can utilize the parts independently of each other.
+This document describes the primary module functionalities, which can be directly accessed as methods of the `fitting_toolkit` package.
 
 ## Using the Fitting Functionality
 
 To fit a dataset, call:
 ```python
-curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 5000, model_resolution: int = None, model_axis = None, nsigma:float = 1, **kwargs)
+curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "scipy", resamples = 5000, model_resolution: int = None, model_axis = None, nsigma:float = 1, **kwargs)
 ```
 
 | Parameters | | |
@@ -16,16 +17,27 @@ curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples = 50
 | model    | function | Function to be fitted. Must take `xdata` as a first argument and then an arbitrary number of fit parameters.|
 | xdata    | np.array | The independent variable where the data is measured. Each element should be float convertible if it is an array-like object.
 | ydata    | np.array | The dependent data, a length M array - nominally f(xdata, ...)
-| yerror   | np.array | (optional) Determines the uncertainty in ydata. Pass absolute values.
-| resamples| int      | (optional) Number of samples to be generated in parameter space for bootstrapping.
+| yerror   | np.array, optional | Determines the uncertainty in ydata.
+| method   | str, optional | Select method used for fitting the model. Must either be "scipy" for scipy's builtin least squares fit or "mle" for maximum likelyhood estimation. By default "scipy" is used.
+| resamples| int, optional | Number of samples to be generated in parameter space for bootstrapping.
 |model_resolution | int, optional | If specified the confidence interval will be calculated at linearly spaced points along x-axis. Otherwise xdata is used.
 | model_axis | numpy.ndarray, optional | If specified this axis is used instead of axis generated via model_resolution.
+| nsigma | float, optional | Specifies the number of standard deviations corresponding to the desired confidence interval, when assuming a normal distribution.
 | **kwargs | any      | (optional) Parameters to be passed on to `scipy.optimize.curve_fit`
 
-| Returns | | |
+| Parameters for MLE | | |
+|----------|-----------------------|-----------------|
+| **Name** |        **Type**       | **Description** |
+| xerror   | np.ndarray (optional) | Determines the uncertainty in ydata.
+| theta_0  | np.ndarray (optional) | Initial guess for parameters
+
+| Returns  | | |
 |----------|----------|-----------------|
 | **Name** | **Type** | **Description** |
 | fit      | fitting_toolkit.Fit | Wrapper object containing the fitted model, fit results and confidence interval. 
+
+When using \"scipy\" method x-errors are not used, y-errors are optional.\
+When using \"mle\" method y-errors are required, x-errors are optional. Note that using xerrors is considerably more computationally expensive.
 
 ### Using Custom Graphics
 
@@ -109,7 +121,10 @@ The matplotlib objects used are returned:
 
 ## Calculate Confidence Interval for an Existing Fit
 
-Given already fitted parameters and a covariance matrix, a confidence interval can be calculated using `confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int, nsigma: float = 1)`
+Given already fitted parameters and a covariance matrix, a confidence interval can be calculated using 
+```python
+confidence_interval(model, xdata: np.array, params: np.array, cov: np.array, resamples: int, nsigma: float = 1)
+```
 
 | Parameters | | |
 |----------|----------|-----------------|
@@ -118,7 +133,8 @@ Given already fitted parameters and a covariance matrix, a confidence interval c
 | xdata    | np.array | The independent variable at which the confidence interval is to be calculated.
 | params   | np.array | Fitted parameters passed onto `model`.
 | cov      | np.array | Covariance matrix of `params`
-| resamples| int      | Number of resamples to be calculated.
+| resamples| int, optional | Number of resamples to be calculated.
+| nsigma | float, optional | Specifies the number of standard deviations corresponding to the desired confidence interval, when assuming a normal distribution.
 
 | Returns | | |
 |----------|----------|-----------------|
@@ -145,7 +161,11 @@ print(f"f({x[i]:.2e}) = {f(x[i], *params):.2e} (+{sigma_pos[i]:.2e}/-{sigma_neg[
 
 ## Generate Probability for Sigma Interval
 
-To get probability to fall into n-sigma interval call `get_sigma_probability(n: float = 1)`
+```py
+get_sigma_probability(n: float = 1)
+```
+
+To get probability to fall into n-sigma interval call 
 
 | Parameters | | |
 |----------|----------|-----------------|
@@ -160,9 +180,11 @@ To get probability to fall into n-sigma interval call `get_sigma_probability(n: 
 
 ## Generating Thresholds
 
-Given a bootstrapped distribution, generate a custom confidence interval.
+```py
+generate_thresholds(data, lower_frac=1/6, upper_frac=5/6)`
+```
 
-Call `generate_thresholds(data, lower_frac=1/6, upper_frac=5/6)`
+Given a bootstrapped distribution, generate a custom confidence interval.
 
 | Parameters | | |
 |----------|----------|-----------------|
