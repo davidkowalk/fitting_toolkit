@@ -19,20 +19,21 @@ $$
 From that assuming the mean is defined by the fitted function $f$ and using the y-uncertainty, compare the probabillity density for a point at y given the paramteters $\theta$ [1, p. 1255]:
 
 $$
-p(y_i | \theta)_{f, \sigma_y^i} = \frac{1}{\sqrt{2\pi\sigma_{y,i}^2}} \exp\left(-\frac{1}{2} \left(\frac{y_i-f(x_i, \theta)}{\sigma_{y,i}}\right)^2\right)
+p(y_i | \theta)_{f, \sigma_y} = \frac{1}{\sqrt{2\pi\sigma_y^2}} \exp\left(-\frac{1}{2} \left(\frac{y_i-f(x_i, \theta)}{\sigma_y}\right)^2\right)
 $$
 
 When also considering the x-uncertainty the calculations become more complicated. [1, p. 1256]
 
 $$
-p(x_i, y_i |\theta)_{f, \sigma_{x,i} \sigma{y_i}} = \int_{-\infty}^{\infty} du_i \frac{1}{2\pi\sigma_{y,i}\sigma_{x,i}}\exp\left(-\frac{(y_i-f(u_i, \theta))^2}{2\sigma_{y,i}^2} -\frac{(x_i - u_i)^2}{2\sigma_{x,i}^2}\right)
+p(y_i | \theta)_{f, \sigma_y, \sigma_x} = \int _{-\infty} ^\infty du_i \frac{1}{2\pi\sigma _{y,i}\sigma _{x,i}} \exp\left(-\frac{(y_i-f(u_i, \theta))^2}{2\sigma _{y,i}^2} -\frac{(x_i - u_i)^2}{2\sigma _{x,i}^2}\right)
 $$
+
 
 Where $u_i$ represents the "true" value of x which is measured with a defined uncertainty. Internally this integration is performed by `scipy.optimize.quad`
 
 It is often advantegious to take the natural logarithm of these functions. When only considering x-errors this simplifies to:
 
-$$-\ln p(y_i | \theta)_{f, \sigma_y^i} =\frac{1}{2}\ln\left({{2\pi\sigma_{y,i}^2}}\right) + \frac{1}{2} \left(\frac{y_i-f(x_i, \theta)}{\sigma_{y,i}}\right)^2$$
+$$-\ln p(y_i | \theta)_{f, \sigma_y^i} =\frac{1}{2}\ln\left({{2\pi\sigma _{y,i}^2}}\right) + \frac{1}{2} \left(\frac{y_i-f(x_i, \theta)}{\sigma _{y,i}}\right)^2$$
 
 This simplification does not work when considering uncertainties in x as the lofarithm does not commutate with the integral as it is not a linear operator.
 
