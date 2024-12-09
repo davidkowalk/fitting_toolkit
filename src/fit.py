@@ -10,10 +10,10 @@ from scipy.optimize import minimize
 # inverse Hessian Matrix is Covariance in log likelyhood
 # https://onlinelibrary.wiley.com/doi/pdf/10.1002/9780470824566.app1
  
-def neg_log_likelihood_per_point_yerr(model, theta: np.ndarray, x: np.ndarray, y: np.ndarray, sigma_y:np.ndarray) -> np.ndarray:
-    return 0.5 * (np.log(2 * np.pi * sigma_y**2) + ((y - model(x, *theta)) / sigma_y)**2)
+def neg_log_likelihood_per_point_yerr(model, theta: np.ndarray, x: np.ndarray, y: np.ndarray, yerror:np.ndarray) -> np.ndarray:
+    return 0.5 * (np.log(2 * np.pi * yerror**2) + ((y - model(x, *theta)) / yerror)**2)
 
-def neg_log_likelihood_per_point_xyerr(model, theta: np.ndarray, x: np.ndarray, y: np.ndarray, sigma_x:np.ndarray, sigma_y:np.ndarray) -> np.ndarray:
+def neg_log_likelihood_per_point_xyerr(model, theta: np.ndarray, x: np.ndarray, y: np.ndarray, xerror:np.ndarray, yerror:np.ndarray) -> np.ndarray:
 
     def single_neg_log_likelihood_per_point_xyerr(xi, yi, sig_xi, sig_yi):
 
@@ -28,7 +28,7 @@ def neg_log_likelihood_per_point_xyerr(model, theta: np.ndarray, x: np.ndarray, 
         return -np.log(integral / norm)
 
     vectorized_likelihood = np.vectorize(single_neg_log_likelihood_per_point_xyerr)
-    return vectorized_likelihood(x, y, sigma_x, sigma_y)
+    return vectorized_likelihood(x, y, xerror, yerror)
 
 def neg_log_likelyhood(theta, model, x, y, yerror, xerror = None):
     """
