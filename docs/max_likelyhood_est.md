@@ -83,5 +83,5 @@ The covariance matrix of the fitted parameters is equivalent to the inverse of t
 The result object produced by `scipy.minimize` already contains the inverse hessian matrix and thus this can simply be returned.
 
 # Literature
-[1] Naylor, T. and Jeffries, R.D., 2006. A maximum-likelihood method for fitting colour–magnitude diagrams. Monthly Notices of the Royal Astronomical Society, 373(3), pp.1251-1263. [Full Text](https://doi.org/10.1111/j.1365-2966.2006.11099.x) (doi: 10.1111/j.1365-2966.2006.11099.x)
+[1] Naylor, T. and Jeffries, R.D., 2006. A maximum-likelihood method for fitting colour–magnitude diagrams. Monthly Notices of the Royal Astronomical Society, 373(3), pp.1251-1263. [Full Text](https://doi.org/10.1111/j.1365-2966.2006.11099.x) (doi: 10.1111/j.1365-2966.2006.11099.x)\
 [2] “The Role of the Hessian Matrix in Fitting Models to Measurements.” Journal of geophysical research JGR ; publ. by American Geophysical Union 94.C5 (1989): 6177–6196. Web. [Paywalled Version]( https://doi.org/10.1029/JC094iC05p06177) (doi: /10.1029/JC094iC05p06177)
