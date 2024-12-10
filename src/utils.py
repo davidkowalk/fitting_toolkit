@@ -51,3 +51,34 @@ def get_sigma_probability(n: float = 1):
     """
 
     return 1/2 * (erf(n / 1.4142135623730951) - erf(-n / 1.4142135623730951))
+
+def generate_gaussian_mix(n):
+
+    """
+    Dynamically generates a function for the superposition of `n` Gaussian functions.
+    
+    Args:
+        n (int): Number of Gaussian functions to include in the superposition.
+    
+    Returns:
+        function: A callable function `f(x, params)` where `params` is a flat array of weights, means, 
+                  and standard deviations for each Gaussian component, of size 3*n.
+    """
+
+    def gaussian_mix(x, *params):
+        
+        if len(params) != 3 * n:
+            raise ValueError(f"Expected {3 * n} parameters, but got {len(params)}.")
+
+        params = np.asarray(params)
+        a = params[0::3]  # Weights
+        mu = params[1::3]  # Means
+        sigma = params[2::3]  # Standard deviations
+
+        x = np.asarray(x)
+        exponent = -0.5 * ((x - mu) / sigma) ** 2  # Shape: (len(x), n)
+        gaussians = (a / (np.sqrt(2 * np.pi) * sigma)) * np.exp(exponent)  # Shape: (len(x), n)
+
+        return np.sum(gaussians, axis=1) if x.ndim > 0 else np.sum(gaussians)
+
+    return gaussian_mix
