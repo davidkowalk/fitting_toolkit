@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
-from src.fitting_toolkit import get_sigma_probability, generate_thresholds, curve_fit
-from src.fitting_toolkit import plot_fit
+from src.utils import get_sigma_probability, generate_thresholds
+from src.fitting_toolkit import plot_fit, curve_fit
 
 """
 Runs Tests for ./src/fitting_toolkit.py

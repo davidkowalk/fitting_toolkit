@@ -1,3 +1,5 @@
+from . import fit
+from . import utils
 from .fitting_toolkit import *
 #generate_thresholds, get_sigma_probability, confidence_interval, curve_fit, plot_fit 
 

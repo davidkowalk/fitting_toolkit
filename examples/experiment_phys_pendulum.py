@@ -3,7 +3,8 @@ This is an example model for a quick experiment on a physical pendulum.
 len describes the measured pendulum length in cm, t the period length in seconds.
 """
 import numpy as np
-from fitting_toolkit import curve_fit, plot_fit, array
+from fitting_toolkit import curve_fit, plot_fit
+from fitting_tooolkit.utils import array
 from matplotlib import pyplot as plt
 
 def model(l, a, b):

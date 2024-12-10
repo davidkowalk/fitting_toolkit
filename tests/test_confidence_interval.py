@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
-from src.fitting_toolkit import get_sigma_probability, confidence_interval
+from src.utils import get_sigma_probability
+from src import confidence_interval
 
 def mock_model(x, m, b):
     # Linear model: y = m * x + b
