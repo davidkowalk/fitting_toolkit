@@ -84,3 +84,44 @@ def curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = Non
     cov = result.hess_inv
 
     return params, cov
+
+def neg_log_event_likelyhood(model, event, theta):
+    x = -np.log(model(event, *theta))
+    return x
+
+def fit_distribution(model, events:np.array, theta_0:np.ndarray = None, range = None, **kwargs):
+    """
+    Finds optimal parameters for probability distribution via maximum likelyhood estimation.
+    Let events x be measurements of a random variable which are independent and identically distributed with probability density p(x, *theta).
+    This function finds the parameters with the highest cumulative negative logarithm of the probability density.
+
+    Args:
+        model (function): Distribution to be fitted
+        events (np.ndarray): Elements observed
+        theta_0 (np.ndarray): Initial guess of parameters
+        range (tuple): Interval in which events are fit.
+        **kwargs: Additional arguments passed to scipy.optimize.minimizer
+
+    Returns
+        params (np.ndarray): Best fit parameters
+        cov (np.ndarray or scipy.sparse.linalg.LinearOperator): Covariance matrix of parameters
+
+    This method may quickly become unreliable for combined resolutions. Peaks should be fit separately.
+    """
+    
+    def total_log_likelyhood(theta, model, events):
+        return np.sum(neg_log_event_likelyhood(model, events, theta))
+
+    if range is not None:
+        events = np.copy(events)
+        events = events[np.logical_and(events > range[0], events < range[1])]
+    
+        
+    if theta_0 is None:
+        theta_0 = np.zeros(model.__code__.co_argcount -1)
+    
+    result = minimize(total_log_likelyhood, theta_0, args=(model, events), **kwargs)
+    params = result.x
+    cov = result.hess_inv
+
+    return params, cov
