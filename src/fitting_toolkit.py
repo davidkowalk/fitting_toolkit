@@ -41,7 +41,7 @@ class Fit():
     def __repr__(self):
         return self.__str__()
     
-    def reduced_chi_sqrd(self, x: np.ndarray, y:np.ndarray):
+    def reduced_chi_sqrd(self, x: np.ndarray, y:np.ndarray, dy:np.ndarray):
         """
         Calculates the reduced Chi-Squared statistic for fit.
 
@@ -55,7 +55,7 @@ class Fit():
         residuals = y - self.model(x, *self.params)
         nu = len(x) - self.model.__code__.co_argcount + 1
 
-        return np.dot(np.transpose(residuals), residuals)/nu
+        return np.sum(residuals**2/dy**2)/nu
 
 
 # =========================
