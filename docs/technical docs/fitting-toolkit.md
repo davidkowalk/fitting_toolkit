@@ -4,7 +4,7 @@
 By separating the fitting functionality from the display options, a user can utilize the parts independently of each other.
 This document describes the primary module functionalities, which can be directly accessed as methods of the `fitting_toolkit` package.
 
-## Using the Fitting Functionality
+## fitting_toolkit.curve_fit
 
 To fit a dataset, call:
 ```python
@@ -66,7 +66,7 @@ plt.plot(model_axis, upper_conf, color = "red")
 plt.show()
 ```
 
-## Displaying the Fitted Function
+## fitting_toolkit.plot_fit
 
 The fitting toolkit ships with built-in functions for displaying data with their fitted functions and their respective confidence intervals.
 ```python
@@ -119,7 +119,7 @@ The matplotlib objects used are returned:
 | ax       | matplotlib.axes.Axes     | Axes object used for graph.
 
 
-## Calculate Confidence Interval for an Existing Fit
+## fitting_toolkit.confidence_interval
 
 Given already fitted parameters and a covariance matrix, a confidence interval can be calculated using 
 ```python
