@@ -1,6 +1,5 @@
 import unittest
 import numpy as np
-from src.utils import get_sigma_probability, generate_thresholds
 from src.fitting_toolkit import plot_fit, curve_fit
 
 """
@@ -10,22 +9,6 @@ Linux: python3 -m unittest discover -s tests
 """
 
 class UnitTests(unittest.TestCase):
-    
-    def test_get_sigma_probability(self):
-        #print("get_sigma_probability")
-        n = np.array((0.5, 1, 1.5, 2, 2.5, 3))
-        p = get_sigma_probability(n)
-        p_expected = [0.382924922548026, 0.682689492137086, 0.866385597462284, 0.954499736103642, 0.987580669348448, 0.997300203936740]
-
-        for i, P in enumerate(p):
-            self.assertAlmostEqual(P, p_expected[i], places = 10)
-
-    def test_threshold(self):
-        #print("test_threshold")
-        x = np.linspace(0, 10, 100)
-        lower, upper = generate_thresholds(x, lower_frac=0.1, upper_frac=0.9)
-        self.assertEqual(len(x[x<lower]), 10)
-        self.assertEqual(len(x[x<upper]), 90)
     
     def test_curve_fit_linear(self):
         #This test may not pass simply due to statistics

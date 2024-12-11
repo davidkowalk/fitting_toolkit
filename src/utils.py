@@ -71,8 +71,10 @@ def generate_gaussian_mix(n):
     def gaussian_mix(x, *params):
         
         if len(params) != 3 * n - 1:
-            print(params)
-            raise ValueError(f"Expected {3 * n - 1} parameters, but got {len(params)}.")
+            raise ValueError(f"Expected {3 * n - 1} parameters, but got {len(params)}.\n Parameters: {params}")
+        
+        if len(np.shape(x)) == 0:
+            x = [x]
 
         params = np.asarray(params)
         mu = params[0::3]  # Means
