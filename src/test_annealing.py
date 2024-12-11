@@ -52,6 +52,22 @@ def generate_data(n_samples, mu1, sigma1, mu2, sigma2, weight1=0.5):
 def model(x, a, mu1, s1, mu2, s2):
     return a*normal(x, mu1, s1) + (1-a)*normal(x, mu2, s2)
 
+def test_gauss_mix():
+    from utils import generate_gaussian_mix
+    from scipy.integrate import quad
+
+    gauss = generate_gaussian_mix(2)
+    params = (1, 0.5, 0.9, 3, 0.5)
+    
+
+    A = quad(gauss, -np.inf, np.inf, args = params)
+    print(A[0])
+
+    #x = np.linspace(0, 5)
+    #y = gauss(x, *params)
+
+
+
 def main():
     np.random.seed(42)  # For reproducibility
     data = generate_data(n_samples=1000, mu1=0, sigma1=1, mu2=3, sigma2=.5, weight1=0.7)
@@ -67,4 +83,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    test_gauss_mix()

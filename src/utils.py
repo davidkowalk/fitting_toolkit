@@ -52,6 +52,9 @@ def get_sigma_probability(n: float = 1):
 
     return 1/2 * (erf(n / 1.4142135623730951) - erf(-n / 1.4142135623730951))
 
+def normal(x, mu, sigma):
+    return (1 / (np.sqrt(2 * np.pi) * sigma))*np.exp(-0.5 * ((x - mu) / sigma) ** 2)
+
 def generate_gaussian_mix(n):
 
     """
@@ -67,18 +70,20 @@ def generate_gaussian_mix(n):
 
     def gaussian_mix(x, *params):
         
-        if len(params) != 3 * n:
-            raise ValueError(f"Expected {3 * n} parameters, but got {len(params)}.")
+        if len(params) != 3 * n - 1:
+            print(params)
+            raise ValueError(f"Expected {3 * n - 1} parameters, but got {len(params)}.")
 
         params = np.asarray(params)
-        a = params[0::3]  # Weights
-        mu = params[1::3]  # Means
-        sigma = params[2::3]  # Standard deviations
+        mu = params[0::3]  # Means
+        sigma = params[1::3]  # Standard deviations
+        a = params[2::3]  # Weights
+        a = np.append(a, 1-np.sum(a))
 
-        x = np.asarray(x)
-        exponent = -0.5 * ((x - mu) / sigma) ** 2  # Shape: (len(x), n)
-        gaussians = (a / (np.sqrt(2 * np.pi) * sigma)) * np.exp(exponent)  # Shape: (len(x), n)
+        f = 0
+        for i in range(n):
+            f += a[i] * normal(x, mu[i], sigma[i])
+            
+        return f
 
-        return np.sum(gaussians, axis=1) if x.ndim > 0 else np.sum(gaussians)
-
-    return gaussian_mix
+    return np.vectorize(gaussian_mix)
