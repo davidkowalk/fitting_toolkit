@@ -52,8 +52,8 @@ def get_sigma_probability(n: float = 1):
 
     return 1/2 * (erf(n / 1.4142135623730951) - erf(-n / 1.4142135623730951))
 
-def normal(x, mu, sigma):
-    return (1 / (np.sqrt(2 * np.pi) * sigma))*np.exp(-0.5 * ((x - mu) / sigma) ** 2)
+def normal(x, mu, sigma, w):
+    return (w / (np.sqrt(2 * np.pi) * sigma))*np.exp(-0.5 * ((x - mu) / sigma) ** 2)
 
 def generate_gaussian_mix(n):
 
@@ -78,12 +78,7 @@ def generate_gaussian_mix(n):
         mu = params[0::3]  # Means
         sigma = params[1::3]  # Standard deviations
         a = params[2::3]  # Weights
-        a = np.append(a, 1-np.sum(a))
 
-        f = 0
-        for i in range(n):
-            f += a[i] * normal(x, mu[i], sigma[i])
-            
-        return f
+        return  np.sum(normal(np.transpose([x]), mu[:-1], sigma[:-1], a), axis = 1) + normal(np.transpose([x]), mu[-1], sigma[-1], 1-np.sum(a))[:,0]
 
-    return np.vectorize(gaussian_mix)
+    return gaussian_mix

@@ -89,7 +89,7 @@ def neg_log_event_likelyhood(model, event, theta):
     x = -np.log(model(event, *theta))
     return x
 
-def fit_distribution_mle(model, events:np.array, theta_0:np.ndarray = None, range = None, **kwargs):
+def fit_distribution_mle(model, events:np.array, theta_0:np.ndarray = None, data_range = None, **kwargs):
     """
     Finds optimal parameters for probability distribution via maximum likelyhood estimation.
     Let events x be measurements of a random variable which are independent and identically distributed with probability density p(x, *theta).
@@ -99,7 +99,7 @@ def fit_distribution_mle(model, events:np.array, theta_0:np.ndarray = None, rang
         model (function): Distribution to be fitted
         events (np.ndarray): Elements observed
         theta_0 (np.ndarray): Initial guess of parameters
-        range (tuple): Interval in which events are fit.
+        data_range (tuple): Interval in which events are fit.
         **kwargs: Additional arguments passed to scipy.optimize.minimizer
 
     Returns
@@ -112,9 +112,9 @@ def fit_distribution_mle(model, events:np.array, theta_0:np.ndarray = None, rang
     def total_log_likelyhood(theta, model, events):
         return np.sum(neg_log_event_likelyhood(model, events, theta))
 
-    if range is not None:
+    if data_range is not None:
         events = np.copy(events)
-        events = events[np.logical_and(events > range[0], events < range[1])]
+        events = events[np.logical_and(events > data_range[0], events < data_range[1])]
     
         
     if theta_0 is None:
@@ -126,7 +126,7 @@ def fit_distribution_mle(model, events:np.array, theta_0:np.ndarray = None, rang
 
     return params, cov
 
-def fit_distribution_anneal(model, events, bounds, range = None, **kwargs):
+def fit_distribution_anneal(model, events, bounds, data_range = None, **kwargs):
     """
     Finds optimal parameters for probability distribution via maximum likelyhood estimation using simulated annealing.
     Let events x be measurements of a random variable which are independent and identically distributed with probability density p(x, *theta).
@@ -138,7 +138,7 @@ def fit_distribution_anneal(model, events, bounds, range = None, **kwargs):
         bounds: Bounds for variables. There are two ways to specify the bounds:
             1. Instance of scipy.Bounds class.
             2. Sequence of (min, max) pairs for each element in x.
-        range (tuple): Interval in which events are fit.
+        data_range (tuple): Interval in which events are fit.
         **kwargs: Additional arguments passed to scipy.optimize.minimizer
 
     Returns
@@ -150,9 +150,9 @@ def fit_distribution_anneal(model, events, bounds, range = None, **kwargs):
     def total_log_likelyhood(theta, model, events):
         return np.sum(neg_log_event_likelyhood(model, events, theta))
 
-    if range is not None:
+    if data_range is not None:
         events = np.copy(events)
-        events = events[np.logical_and(events > range[0], events < range[1])]
+        events = events[np.logical_and(events > data_range[0], events < data_range[1])]
     
     result = dual_annealing(total_log_likelyhood, bounds, args=(model, events), **kwargs)
     params = result.x
