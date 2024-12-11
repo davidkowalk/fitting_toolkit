@@ -2,8 +2,8 @@ from scipy.optimize import curve_fit as curve_fit_scipy
 import numpy as np
 from matplotlib import pyplot as plt
 
-from fit import curve_fit_mle, fit_distribution_mle, fit_distribution_anneal
-from utils import generate_thresholds, get_sigma_probability, generate_gaussian_mix
+from . fit import curve_fit_mle, fit_distribution_mle, fit_distribution_anneal
+from . utils import generate_thresholds, get_sigma_probability, generate_gaussian_mix
 
 class Fit():
     """
@@ -158,10 +158,41 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
     return Fit(model, params, cov, resampled_points, upper_conf, lower_conf)
 
 
-def fit_peaks(events, peak_estimates, peak_limits, max_sigma, weight_estimates = None, anneal = True, **kwargs):
-    
+def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, anneal = False, model = None, **kwargs):
+    """
+    Fits a mixture of Gaussian peaks to a given set of events using maximum likelihood estimation (MLE) 
+    or simulated annealing for initial parameter optimization.
+
+    Args:
+        events (array-like): The data points or events to which the Gaussian mixture model will be fitted. Typically a 1D array.
+        peak_estimates (np.ndarray): Initial estimates for the locations (means) of the Gaussian peaks.
+        peak_limits (float or np.ndarray): Limits for how far each Gaussian mean can deviate from the initial peak estimates.
+        sigma_init (float or np.ndarray): 
+            Initial estimates for the standard deviations (sigmas) of the Gaussian peaks. If a single value is provided, it will be applied to all peaks.
+            If anneal is set to True this value will be used as upper limit, if anneal is not used it will be used as initial estimate.
+        theta_0** (array-like, optional):  
+          Initial parameters for the Gaussian mixture model, following the format:  
+          [mu_1, sigma_1, weight_1, ..., weight_(n-1), mu_n, sigma_n]`.  
+          If `None`, the parameters will be initialized based on peak_estimates and sigma_init.
+          If anneal = True it will be ignored
+        anneal (bool, optional): If True, uses simulated annealing to optimize the initial parameters. Default is False. This option is significantly more computationally expensive than local search.
+            Recommended only for non convex probability space, i.e. multiple peaks.
+        model (callable, optional): A custom model to use instead of a Gaussian mixture. If None, a Gaussian mixture model is generated. Provide taylored model for large number of peaks.
+        **kwargs: Additional arguments passed to the fitting functions (`fit_distribution_anneal` or `fit_distribution_mle`).
+
+    Returns:
+        Fit (`Fit` object):  
+          A Fit object containing the following:
+          - model: The fitted model (Gaussian mixture or custom model).
+          - params: Optimized parameters for the model.
+          - cov: Covariance matrix for the parameter estimates.
+          - Other attributes are set to `None` in the current implementation.
+    """
     peak_number = len(peak_estimates)
-    gauss_mix = generate_gaussian_mix(peak_number)
+    if model is None:
+        gauss_mix = generate_gaussian_mix(peak_number)
+    else:
+        gauss_mix = model
 
     if anneal:
 
@@ -169,7 +200,7 @@ def fit_peaks(events, peak_estimates, peak_limits, max_sigma, weight_estimates =
 
         #generate bounds
         mu_bounds = np.transpose((peak_estimates-peak_limits, peak_estimates+peak_limits))
-        sigma_bounds = (min_sigma, max_sigma)
+        sigma_bounds = (min_sigma, sigma_init)
         a_bounds = [0, 1]
 
         bounds = list()
@@ -183,10 +214,20 @@ def fit_peaks(events, peak_estimates, peak_limits, max_sigma, weight_estimates =
         theta_0 = fit_distribution_anneal(gauss_mix, events, bounds)
     
     if theta_0 is None:
-        pass
+        #arange parameters appropriately
+        #scheme: mu_1, s_1, a_1, mu_2, s_2, a_2..., a_n-1, mu_n, s_n
+        theta_0 = list()
+        if not hasattr(sigma_init, "__iter__"):
+            sigma_init = [sigma_init]*peak_number
+
+        for est in zip(peak_estimates, sigma_init):
+            theta_0.extend(est)
+            theta_0.append(1/peak_number)
+    
+        del(theta_0[-1])
 
     params, cov = fit_distribution_mle(gauss_mix, events, theta_0)
-    return params, cov, gauss_mix
+    return Fit(model, params, cov, None, None, None) #Return without confidence interval
 
 
 
