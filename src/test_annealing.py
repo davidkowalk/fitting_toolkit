@@ -6,6 +6,7 @@ import numpy as np
 from scipy.optimize import Bounds
 
 from fit import fit_distribution_anneal
+from fitting_toolkit import fit_peaks
 
 from matplotlib import pyplot as plt
 
@@ -66,9 +67,7 @@ def test_gauss_mix():
     #x = np.linspace(0, 5)
     #y = gauss(x, *params)
 
-
-
-def main():
+def test_anneal():
     np.random.seed(42)  # For reproducibility
     data = generate_data(n_samples=1000, mu1=0, sigma1=1, mu2=3, sigma2=.5, weight1=0.7)
     
@@ -80,7 +79,14 @@ def main():
     plt.step(x, model(x, *params))
     plt.show()
 
+def test_peak_fit():
+    np.random.seed(42)  # For reproducibility
+    data = generate_data(n_samples=1000, mu1=0.2, sigma1=1, mu2=3.1, sigma2=.5, weight1=0.7)
+
+    params, cov, model = fit_peaks(data, np.array([0, 3]), peak_limits=0.5, max_sigma=2)
+
+    print(params)
 
 
 if __name__ == "__main__":
-    test_gauss_mix()
+    test_peak_fit()

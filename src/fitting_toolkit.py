@@ -2,8 +2,8 @@ from scipy.optimize import curve_fit as curve_fit_scipy
 import numpy as np
 from matplotlib import pyplot as plt
 
-from .fit import curve_fit_mle
-from .utils import generate_thresholds, get_sigma_probability
+from fit import curve_fit_mle, fit_distribution_mle, fit_distribution_anneal
+from utils import generate_thresholds, get_sigma_probability, generate_gaussian_mix
 
 class Fit():
     """
@@ -156,6 +156,39 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
     lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples, nsigma)
 
     return Fit(model, params, cov, resampled_points, upper_conf, lower_conf)
+
+
+def fit_peaks(events, peak_estimates, peak_limits, max_sigma, weight_estimates = None, anneal = True, **kwargs):
+    
+    peak_number = len(peak_estimates)
+    gauss_mix = generate_gaussian_mix(peak_number)
+
+    if anneal:
+
+        min_sigma = np.min(np.abs(events - np.roll(events, 1)))
+
+        #generate bounds
+        mu_bounds = np.transpose((peak_estimates-peak_limits, peak_estimates+peak_limits))
+        sigma_bounds = (min_sigma, max_sigma)
+        a_bounds = [0, 1]
+
+        bounds = list()
+
+        for i in range(peak_number):
+            bounds.extend([mu_bounds[i], sigma_bounds, a_bounds])
+        
+        bounds = bounds[:-1]
+
+        #fit using annealment
+        theta_0 = fit_distribution_anneal(gauss_mix, events, bounds)
+    
+    if theta_0 is None:
+        pass
+
+    params, cov = fit_distribution_mle(gauss_mix, events, theta_0)
+    return params, cov, gauss_mix
+
+
 
 def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
     """
