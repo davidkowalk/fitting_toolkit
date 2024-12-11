@@ -2,8 +2,8 @@ from scipy.optimize import curve_fit as curve_fit_scipy
 import numpy as np
 from matplotlib import pyplot as plt
 
-from fit import curve_fit_mle, fit_distribution_mle, fit_distribution_anneal
-from utils import generate_thresholds, get_sigma_probability, generate_gaussian_mix
+from .fit import curve_fit_mle, fit_distribution_mle, fit_distribution_anneal
+from .utils import generate_thresholds, get_sigma_probability, generate_gaussian_mix
 
 class Fit():
     """
