@@ -1,5 +1,5 @@
-from setuptools import setup
-#run with python3 setup.py sdist bdist_wheel
+from setuptools import setup, find_packages
+#   
 
 with open("./package_description.md") as f:
     description = f.read()
@@ -9,9 +9,9 @@ with open("./requirements.txt", encoding="utf-16") as f:
 
 setup(
     name = "fitting_toolkit",
-    version = "1.0.2",
+    version = "1.1.0",
     package_dir={"": "src"},
-    packages=[""],
+    packages=find_packages(where="src"),
     long_description=description,
     long_description_content_type="text/markdown",
     install_requires = requirements,

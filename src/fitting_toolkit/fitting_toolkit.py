@@ -5,6 +5,8 @@ from matplotlib import pyplot as plt
 from .fit import curve_fit_mle, fit_distribution_mle, fit_distribution_anneal
 from .utils import generate_thresholds, get_sigma_probability, generate_gaussian_mix
 
+__all__ = ["Fit", "confidence_interval", "curve_fit", "fit_peaks", "plot_fit"]
+
 class Fit():
     """
     Class for wrapping all relevant information for a fitted function
