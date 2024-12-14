@@ -31,6 +31,12 @@ If you need a specific version (for example due to compatibillity issues) you ca
 pip install fitting-toolkit==1.0.1
 ```
 
+You can test, whether the package was installed properly via:
+```py
+import fitting_toolkit as ft
+ft.version()
+```
+
 ### Alternative Installation Methods
 
 You can find all releases here: 
