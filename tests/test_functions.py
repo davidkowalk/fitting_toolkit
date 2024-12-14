@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from src.fitting_toolkit import plot_fit, curve_fit
+from src.fitting_toolkit.fitting_toolkit import plot_fit, curve_fit
 
 """
 Runs Tests for ./src/fitting_toolkit.py
