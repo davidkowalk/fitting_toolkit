@@ -28,8 +28,18 @@ class Fit():
         self.cov = cov
 
     def __str__(self):
+        if self.model is None:
+            model = "No model found"
+            model_args = ""
+        elif hasattr(model, "__code__"):
+            model = self.model.__code__.co_name
+            model_args = f"({", ".join(self.model.__code__.co_varnames)})"
+        else:
+            model = str(self.model)
+            model_args = ""
+            
         str_repr = f"""Fit(
-    model = {self.model.__code__.co_name}({", ".join(self.model.__code__.co_varnames)})
+    model = {model}{model_args}
     params = ({", ".join(self.params.astype(str))})
     cov = {'\n\t' + str(self.cov).replace('\n', '\n\t')}
     axis = array{str(np.shape(self.axis))}
