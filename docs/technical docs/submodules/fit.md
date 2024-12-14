@@ -3,7 +3,7 @@
 The submodule `fit` contains all relevant functions for fitting models.
 The functions here are called from `fitting_toolkit.curve_fit`.
 
-## neg_log_likelihood_per_point_yerr
+## fitting_toolkit.fit.neg_log_likelihood_per_point_yerr
 
 ```python
 neg_log_likelihood_per_point_yerr(model, theta: np.ndarray, x: np.ndarray, y: np.ndarray, yerror:np.ndarray)
@@ -27,7 +27,7 @@ $$
 =\frac{1}{2}\ln\left({{2\pi\sigma _{y,i}^2}}\right) + \frac{1}{2} \left(\frac{y_i-f(x_i, \theta)}{\sigma _{y,i}}\right)^2
 $$
 
-## neg_log_likelihood_per_point_xyerr
+## fitting_toolkit.fit.neg_log_likelihood_per_point_xyerr
 
 ```python
 neg_log_likelihood_per_point_xyerr(model, theta: np.ndarray, x: np.ndarray, y: np.ndarray, xerror:np.ndarray, yerror:np.ndarray)
@@ -53,7 +53,7 @@ $$
 -\ln p(y_i | \theta)_{f, \sigma_y, \sigma_x} = -\ln \int _{-\infty} ^\infty du_i \frac{1}{2\pi\sigma _{y,i}\sigma _{x,i}} \exp\left(-\frac{(y_i-f(u_i, \theta))^2}{2\sigma _{y,i}^2} -\frac{(x_i - u_i)^2}{2\sigma _{x,i}^2}\right)
 $$
 
-## neg_log_likelyhood
+## fitting_toolkit.fit.neg_log_likelyhood
 ```python
 neg_log_likelyhood(theta, model, x, y, yerror, xerror = None)
 ```
@@ -76,7 +76,7 @@ If the error in x is negligable it should be omitted for performance reasons.
 
 While standard deviation in y is required the standard deviation in x is optional. The appropriate function per point is automatically selected. If the error in x is negligable it should be omitted for performance reasons.
 
-## curve_fit_mle
+## fitting_toolkit.fit.curve_fit_mle
 ```python
 curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = None, xerror = None)
 ```

@@ -4,7 +4,7 @@
 By separating the fitting functionality from the display options, a user can utilize the parts independently of each other.
 This document describes the primary module functionalities, which can be directly accessed as methods of the `fitting_toolkit` package.
 
-## Using the Fitting Functionality
+## fitting_toolkit.curve_fit
 
 To fit a dataset, call:
 ```python
@@ -66,7 +66,32 @@ plt.plot(model_axis, upper_conf, color = "red")
 plt.show()
 ```
 
-## Displaying the Fitted Function
+## fitting_toolkit.fit_peaks
+Fits a probability density to to a random measurement using maximum likelihood estimation (MLE) 
+Optionally uses simulated annealing for initial parameter optimization.
+```py
+fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, anneal = False, model = None, **kwargs)
+```
+
+
+| Parameters | | |
+|----------|------------|-----------------|
+| **Name** |  **Type**  | **Description** |
+| events   | np.ndarray | The data points or events to which the Gaussian mixture model will be fitted. Typically a 1D array.
+| peak_estimates |np.ndarray | Initial estimates for the locations (means) of the Gaussian peaks.
+| peak_limits |float or np.ndarray | Limits for how far each Gaussian mean can deviate from the initial peak estimates.
+| sigma_init | float or np.ndarray | Initial estimates for the standard deviations (sigmas) of the Gaussian peaks. If a single value is provided, it will be applied to all peaks. If anneal is set to True this value will be used as upper limit, if anneal is not used it will be used as initial estimate.
+| theta_0 | array-like, optional | Initial parameters for the Gaussian mixture model, following the format: `[mu_1, sigma_1, weight_1, ..., weight_(n-1), mu_n, sigma_n]`. If `None`, the parameters will be initialized based on peak_estimates and sigma_init. If anneal = True it will be ignored
+| anneal | bool, optional | If True, uses simulated annealing to optimize the initial parameters. Default is False. This option is significantly more computationally expensive than local search. Recommended only for non convex probability space, i.e. multiple peaks.
+| model | callable, optional| A custom model to use instead of a Gaussian mixture. If None, a Gaussian mixture model is generated. Provide taylored model for large number of peaks.
+|**kwargs || Additional arguments passed to the fitting functions (`fit_distribution_anneal` or `fit_distribution_mle`).
+
+| Returns  | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| fit      | fitting_toolkit.Fit | Wrapper object containing the fitted model, fit results and confidence interval. 
+
+## fitting_toolkit.plot_fit
 
 The fitting toolkit ships with built-in functions for displaying data with their fitted functions and their respective confidence intervals.
 ```python
@@ -82,7 +107,6 @@ plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsiz
 | **Optional Arguments** |
 | xerror   | numpy.ndarray, optional | The uncertainties in the x-values of the data points. Default is None.
 | yerror   | numpy.ndarray, optional | The uncertainties in the y-values of the data points. Default is None.
-
 | **Display Options** |
 |fit_color | color, optional | color of the fitted function.
 |markersize| int, optional | The size of the markers for the data points. Default is 4.
@@ -93,8 +117,6 @@ plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsiz
 |ax        | matplotlib.axes.Axes, optional | Axes object to be used for plotting. If not provided it is either inferred from `fig`, or a new object is generated. 
 |**kwargs  || Additional arguments passed to `pyplot.subplots()`
 
-
-If the upper and lower bounds were generated with a custom resolution, the same resolution must be provided in the `model_resolution` parameter.
 
 You may also pass keyword arguments to `matplotlib.pyplot.subplots()` via `**kwargs`. 
 For comprehensive documentation please consult [`subplots()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html), [`figure()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure) and [`add_plot()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.add_subplot.html#matplotlib.figure.Figure.add_subplot).
@@ -119,7 +141,7 @@ The matplotlib objects used are returned:
 | ax       | matplotlib.axes.Axes     | Axes object used for graph.
 
 
-## Calculate Confidence Interval for an Existing Fit
+## fitting_toolkit.confidence_interval
 
 Given already fitted parameters and a covariance matrix, a confidence interval can be calculated using 
 ```python

@@ -2,7 +2,7 @@
 
 This module contains general utility functions.
 
-## array
+## fitting_toolkit.utils.array
 
 Generates numpy array from arguments
 
@@ -24,7 +24,7 @@ fitting_toolkit.utils.array(1, 2, 3, 4)
 ```
 
 
-## get_sigma_probability (Generate Probability for Sigma Interval)
+## fitting_toolkit.utils.get_sigma_probability (Generate Probability for Sigma Interval)
 
 ```py
 get_sigma_probability(n: float = 1)
@@ -43,7 +43,7 @@ To get probability to fall into n-sigma interval call assuming a normal distribu
 | p        | float    | Probability of falling into sigma interval. $P(\mu - n*\sigma < X < \mu + n*\sigma) $
 
 
-## generate_thresholds
+## fitting_toolkit.utils.generate_thresholds
 
 ```py
 generate_thresholds(data, lower_frac=1/6, upper_frac=5/6)`
