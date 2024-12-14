@@ -84,3 +84,27 @@ def generate_gaussian_mix(n):
         return  np.sum(normal(np.transpose([x]), mu[:-1], sigma[:-1], a), axis = 1) + normal(np.transpose([x]), mu[-1], sigma[-1], 1-np.sum(a))[:,0]
 
     return gaussian_mix
+
+def versions(print_versions = True, return_list = False):
+    """
+    Requests available versions of package from PyPI and prints as list.
+    """
+    import requests
+    url = "https://pypi.org/pypi/fitting-toolkit/json"
+    package = requests.get(url).json()
+    if print_versions:
+        print("Version\tDate")
+        for version, release in package['releases'].items():
+            print(f"{version}\t{release[0]["upload_time"].split("T")[0]}")
+    
+    if return_list or not print_versions:
+        return package['releases'].items()
+    
+def stats():
+    """
+    Returns PyPi download-statistics via https://pypistats.org.
+    """
+    import requests
+    url = "https://pypistats.org/api/packages/fitting_toolkit/recent"
+    package = requests.get(url).json()
+    return package["data"]
