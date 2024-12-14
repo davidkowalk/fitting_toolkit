@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
-from src.fitting_toolkit import fit_peaks, Fit
-from src.utils import normal
+from src.fitting_toolkit.fitting_toolkit import fit_peaks, Fit
+from src.fitting_toolkit.utils import normal
 
 class TestFitPeaks(unittest.TestCase):
     def setUp(self):

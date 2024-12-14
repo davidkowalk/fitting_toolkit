@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
 from scipy.integrate import quad
-from src.utils import get_sigma_probability, generate_thresholds, generate_gaussian_mix
+from src.fitting_toolkit.utils import get_sigma_probability, generate_thresholds, generate_gaussian_mix
 
 class TestUtils(unittest.TestCase):
 
