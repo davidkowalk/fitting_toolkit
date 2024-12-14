@@ -118,8 +118,6 @@ plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsiz
 |**kwargs  || Additional arguments passed to `pyplot.subplots()`
 
 
-If the upper and lower bounds were generated with a custom resolution, the same resolution must be provided in the `model_resolution` parameter.
-
 You may also pass keyword arguments to `matplotlib.pyplot.subplots()` via `**kwargs`. 
 For comprehensive documentation please consult [`subplots()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html), [`figure()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figure.html#matplotlib.pyplot.figure) and [`add_plot()`](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.add_subplot.html#matplotlib.figure.Figure.add_subplot).
 Please note that it's assumed that `subplots()` returns a figure object and a single axes object.

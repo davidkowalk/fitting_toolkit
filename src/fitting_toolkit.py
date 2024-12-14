@@ -11,7 +11,7 @@ class Fit():
     Fit(model, params, cov, x: np.ndarray, y: np.ndarray, upper: np.ndarray, lower: np.ndarray, dx: np.ndarray = None, dy: np.ndarray = None, resampled_points: np.ndarray = None)
     """
 
-    def __init__(self, model, params: np.ndarray, cov: np.ndarray, x: np.ndarray, upper: np.ndarray, lower: np.ndarray):
+    def __init__(self, model, params: np.ndarray, cov: np.ndarray, axis: np.ndarray, upper: np.ndarray, lower: np.ndarray):
         """
         model (function): The model function that takes `xdata` and model parameters as inputs.
         params (numpy.ndarray): The parameters for the model fit.
@@ -19,7 +19,7 @@ class Fit():
         upper (numpy.ndarray): The upper bounds of the confidence intervals for the model predictions.
         """
         self.model = model
-        self.axis = x
+        self.axis = axis
 
         self.upper = upper
         self.lower = lower 
@@ -37,7 +37,7 @@ class Fit():
         else:
             model = str(self.model)
             model_args = ""
-            
+
         str_repr = f"""Fit(
     model = {model}{model_args}
     params = ({", ".join(self.params.astype(str))})
