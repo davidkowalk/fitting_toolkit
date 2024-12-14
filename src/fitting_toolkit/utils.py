@@ -99,7 +99,14 @@ def versions(print_versions = True, return_list = False):
     
     if return_list or not print_versions:
         return package['releases'].items()
-    
+
+def version():
+    """
+    Returns current version of fitting_toolkit.
+    """
+    from importlib.metadata import version
+    return version("fitting_toolkit")
+
 def stats():
     """
     Returns PyPi download-statistics via https://pypistats.org.
