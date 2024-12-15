@@ -10,7 +10,7 @@
 
 
 # Fitting Toolkit
-This toolkit aims at providing flexible and powerful tools for data analysis and modelling, but remain easy to use.
+This toolkit aims at providing flexible and powerful tools for preliminary data analysis and modelling, but remain easy to use.
 This toolkit is aimed primarily at my peers, students of physics at the university of bonn, and to a degree at professionals within my field. I am optimizing this toolkit to be used on the scale typical of lab courses and homework assignments but if possible it should be powerful enough to run decently sized datasets on an average laptop.
 
 This package wraps numpy for fast data management and manipulation, scipy for `curve_fit()` and matplotlib for display options.

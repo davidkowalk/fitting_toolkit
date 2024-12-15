@@ -9,7 +9,7 @@ with open("./requirements.txt", encoding="utf-16") as f:
 
 setup(
     name = "fitting_toolkit",
-    version = "1.0.2",
+    version = "1.0.3",
     package_dir={"": "src"},
     packages=[""],
     long_description=description,
