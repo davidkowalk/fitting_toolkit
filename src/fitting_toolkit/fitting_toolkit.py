@@ -247,7 +247,7 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
 
 
 
-def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, drawstyle = None, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
+def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, line_kwargs = None, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
     """
     Plots the model fit to the data along with its confidence intervals.
 
@@ -264,6 +264,8 @@ def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, ca
         fit_color (color, optional): color of the fitted function.
         markersize (int, optional): The size of the markers for the data points. Default is 4.
         capsize (int, optional): The size of the caps on the error bars. Default is 4.
+        line_kwargs (dict, optional):
+            Additional keyword arguments passed to the `plot` function for customizing line appearance of fit and confidence interval.
         fit_label (str, optional): Label applied to the least square fit.
         confidence_label(str, optional): Label applied to upper confidence threshold.
         fig (matplotlib.pyplot.Figure, optional): Figure Object to use for plotting. If not provided it is either inferred from ax if given or a new object is generated.
@@ -305,11 +307,11 @@ def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, ca
         fig = ax.get_figure()
 
     ax.errorbar(xdata, ydata, yerr = yerror, xerr = xerror, fmt=".", linestyle = "", color = fit_color, capsize=capsize, markersize = markersize)
-    ax.plot(fit.axis, fit.model(fit.axis, *fit.params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label, drawstyle = drawstyle)
+    ax.plot(fit.axis, fit.model(fit.axis, *fit.params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label, **line_kwargs)
     if fit.upper is not None:
-        ax.plot(fit.axis, fit.upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label)
+        ax.plot(fit.axis, fit.upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label, **line_kwargs)
     if fit.lower is not None:
-        ax.plot(fit.axis, fit.lower, color = fit_color, linewidth = 0.75, linestyle = "--")
+        ax.plot(fit.axis, fit.lower, color = fit_color, linewidth = 0.75, linestyle = "--", **line_kwargs)
 
     return fig, ax
 

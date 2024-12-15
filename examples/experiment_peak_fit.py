@@ -1,7 +1,9 @@
 import numpy as np
 
-from fit import fit_distribution_anneal
+from fitting_toolkit.fit import fit_distribution_anneal
 from fitting_toolkit import fit_peaks, plot_fit
+
+from fitting_toolkit.utils import args_to_dict
 
 from matplotlib import pyplot as plt
 
@@ -56,7 +58,7 @@ def test_peak_fit():
 
     norm = np.sum(h*(bins[1]-bins[0]))
 
-    fig, ax = plot_fit(x, h/norm, fit, drawstyle = "steps")
+    fig, ax = plot_fit(x, h/norm, fit, line_kwargs=args_to_dict(drawstyle = "steps"))
     fig.show()
 
     fig, ax = plt.subplots()

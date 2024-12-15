@@ -20,6 +20,9 @@ def array(*x):
     """
     return np.array(x)
 
+def args_to_dict(**kwargs):
+    return kwargs
+
 def generate_thresholds(data, lower_frac=0.15865, upper_frac=0.84135):
     """
     Generates two thresholds such that:

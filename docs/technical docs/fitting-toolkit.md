@@ -95,7 +95,7 @@ fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, annea
 
 The fitting toolkit ships with built-in functions for displaying data with their fitted functions and their respective confidence intervals.
 ```python
-plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs)
+plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, line_kwargs = None, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs)
 ```
 
 | Parameters | | |
@@ -111,6 +111,7 @@ plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsiz
 |fit_color | color, optional | color of the fitted function.
 |markersize| int, optional | The size of the markers for the data points. Default is 4.
 |capsize   | int, optional | The size of the caps on the error bars. Default is 4.
+|line_kwargs|dict, optional|  Additional keyword arguments passed to the `plot` function for customizing line appearance of fit and confidence interval.
 |fit_label | str, optional | Label applied to the least square fit.
 |confidence_label | str, optional | Label applied to upper confidence threshold.
 |fig       | matplotlib.pyplot.Figure, optional | Figure Object to use for plotting. If not provided it is either inferred from `ax` if given, or a new object is generated.

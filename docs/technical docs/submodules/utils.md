@@ -23,6 +23,13 @@ numpy.array([1, 2, 3, 4])
 fitting_toolkit.utils.array(1, 2, 3, 4)
 ```
 
+## fitting_toolkit.utils.def args_to_dict
+
+Returns key word arguments as dictionary.
+```
+args_to_dict(**kwargs)
+```
+
 
 ## fitting_toolkit.utils.get_sigma_probability (Generate Probability for Sigma Interval)
 
