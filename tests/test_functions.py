@@ -60,12 +60,12 @@ class UnitTests(unittest.TestCase):
         ydata = model(xdata, 2, 1)
         yerror = np.array([0.1] * len(xdata))
 
-        with patch('src.fitting_toolkit.sc_curve_fit', wraps=mock_curve_fit):
+        with patch('src.fitting_toolkit.fitting_toolkit.curve_fit_scipy', wraps=mock_curve_fit):
             with self.assertWarns(RuntimeWarning) as cm:
-                params, cov, lower_conf, upper_conf = curve_fit(
+                fit = curve_fit(
                     model, xdata, ydata, yerror=yerror
                 )
             
             self.assertIn("Covariance matrix includes infinite values", str(cm.warning))
-            self.assertIsNone(lower_conf)
-            self.assertIsNone(upper_conf)
+            self.assertIsNone(fit.lower)
+            self.assertIsNone(fit.upper)

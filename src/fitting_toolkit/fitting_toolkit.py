@@ -5,6 +5,8 @@ from matplotlib import pyplot as plt
 from .fit import curve_fit_mle, fit_distribution_mle, fit_distribution_anneal
 from .utils import generate_thresholds, get_sigma_probability, generate_gaussian_mix
 
+import warnings
+
 __all__ = ["Fit", "confidence_interval", "curve_fit", "fit_peaks", "plot_fit"]
 
 class Fit():
@@ -165,7 +167,11 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
     else:
         raise ValueError("Unable to specify confidence points")
     
-    lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples, nsigma)
+    if np.inf in cov or -np.inf in cov:
+        warnings.warn("Covariance matrix includes infinite values. This usually occours due to a non convergent loss function, i.e. an unfittable model. Confidence interval could not be calculated.", RuntimeWarning)
+        lower_conf, upper_conf = None, None
+    else:
+        lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples, nsigma)
 
     return Fit(model, params, cov, resampled_points, upper_conf, lower_conf)
 
