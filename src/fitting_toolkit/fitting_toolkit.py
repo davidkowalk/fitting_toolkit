@@ -241,7 +241,7 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
 
 
 
-def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
+def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, drawstyle = None, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
     """
     Plots the model fit to the data along with its confidence intervals.
 
@@ -280,9 +280,9 @@ def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, ca
         raise ValueError(f"x-data and y-data have different lengths and thus cannot be broadcast together.\nx: {np.shape(xdata)}, y: {np.shape(ydata)}")
 
 
-    if not(np.shape(fit.axis) == np.shape(fit.lower)):
+    if (not fit.lower is None) and (not np.shape(fit.axis) == np.shape(fit.lower)):
         raise ValueError(f"x-axis does not match length of lower confidence interval\nx: {np.shape(fit.axis)}, y: {np.shape(fit.lower)}")
-    if not(np.shape(fit.axis) == np.shape(fit.upper)):
+    if (not fit.upper is None) and (not np.shape(fit.axis) == np.shape(fit.upper)):
         raise ValueError(f"x-axis does not match length of upper confidence interval\nx: {np.shape(fit.axis)}, y: {np.shape(fit.upper)}")
     
     if fig is None and ax is None:
@@ -299,9 +299,11 @@ def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, ca
         fig = ax.get_figure()
 
     ax.errorbar(xdata, ydata, yerr = yerror, xerr = xerror, fmt=".", linestyle = "", color = fit_color, capsize=capsize, markersize = markersize)
-    ax.plot(fit.axis, fit.model(fit.axis, *fit.params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label)
-    ax.plot(fit.axis, fit.upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label)
-    ax.plot(fit.axis, fit.lower, color = fit_color, linewidth = 0.75, linestyle = "--")
+    ax.plot(fit.axis, fit.model(fit.axis, *fit.params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label, drawstyle = drawstyle)
+    if fit.upper is not None:
+        ax.plot(fit.axis, fit.upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label)
+    if fit.lower is not None:
+        ax.plot(fit.axis, fit.lower, color = fit_color, linewidth = 0.75, linestyle = "--")
 
     return fig, ax
 

@@ -1,7 +1,7 @@
 import numpy as np
 
 from fit import fit_distribution_anneal
-from fitting_toolkit import fit_peaks
+from fitting_toolkit import fit_peaks, plot_fit
 
 from matplotlib import pyplot as plt
 
@@ -45,7 +45,6 @@ def test_anneal():
     plt.show()
 
 def test_peak_fit():
-    np.random.seed(42)  # For reproducibility
     data = get_data(n_samples=1000, mu1=0.2, sigma1=1, mu2=3.1, sigma2=.5, weight1=0.7)
     fit = fit_peaks(data, np.array([0, 3]), peak_limits=0.5, sigma_init=2, anneal=True)
 
@@ -53,7 +52,14 @@ def test_peak_fit():
     dh = np.sqrt(h)
     x = (bins[:-1]+bins[1:])/2
 
+    fit.axis = x
+
     norm = np.sum(h*(bins[1]-bins[0]))
+
+    fig, ax = plot_fit(x, h/norm, fit, drawstyle = "steps")
+    fig.show()
+
+    fig, ax = plt.subplots()
 
     #errorbars are misrepresented here because it looks nicer
     plt.errorbar(x, h/norm, dh/len(data), color = "black", linestyle = "", capsize=4)
