@@ -33,7 +33,7 @@ class Fit():
         if self.model is None:
             model = "No model found"
             model_args = ""
-        elif hasattr(model, "__code__"):
+        elif hasattr(self.model, "__code__"):
             model = self.model.__code__.co_name
             model_args = f"({", ".join(self.model.__code__.co_varnames)})"
         else:
@@ -43,7 +43,7 @@ class Fit():
         str_repr = f"""Fit(
     model = {model}{model_args}
     params = ({", ".join(self.params.astype(str))})
-    cov = {'\n\t' + str(self.cov).replace('\n', '\n\t')}
+    cov = {'\n\t' + np.array2string(self.cov, precision=5).replace('\n', '\n\t')}
     axis = array{str(np.shape(self.axis))}
     lower = array{str(np.shape(self.lower))}
     upper = array{str(np.shape(self.upper))}
@@ -202,9 +202,7 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
     """
     peak_number = len(peak_estimates)
     if model is None:
-        gauss_mix = generate_gaussian_mix(peak_number)
-    else:
-        gauss_mix = model
+        model = generate_gaussian_mix(peak_number)
 
     if anneal:
 
@@ -223,7 +221,7 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
         bounds = bounds[:-1]
 
         #fit using annealment
-        theta_0 = fit_distribution_anneal(gauss_mix, events, bounds)
+        theta_0 = fit_distribution_anneal(model, events, bounds)
     
     if theta_0 is None:
         #arange parameters appropriately
@@ -238,7 +236,7 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
     
         del(theta_0[-1])
 
-    params, cov = fit_distribution_mle(gauss_mix, events, theta_0)
+    params, cov = fit_distribution_mle(model, events, theta_0)
     return Fit(model, params, cov, None, None, None) #Return without confidence interval
 
 
