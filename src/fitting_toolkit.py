@@ -2,6 +2,7 @@ from scipy.optimize import curve_fit as sc_curve_fit
 from scipy.special import erf
 import numpy as np
 from matplotlib import pyplot as plt
+import warnings
 
 def generate_thresholds(data, lower_frac=0.15865, upper_frac=0.84135):
     """
@@ -105,6 +106,11 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, resamples 
         raise ValueError(f"x-data and y-data have different lengths and thus cannot be broadcast together.\nx: {np.shape(xdata)}, y: {np.shape(ydata)}")
 
     params, cov = sc_curve_fit(f = model, xdata = xdata, ydata = ydata, sigma = yerror, **kwargs)
+
+    if np.inf in cov or -np.inf in cov:
+        warnings.warn("Covariance matrix includes infinite values. This usually occours due to a non convergent loss function, i.e. an unfittable model. Confidence interval could not be calculated.", RuntimeWarning)
+        return params, cov, None, None
+
     if not model_axis is None:
          resampled_points = model_axis
     elif model_resolution is None:
