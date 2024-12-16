@@ -13,7 +13,7 @@ This document is a checklist for maintainers to release a new version of this pa
 
 ## Building and Merging
 
-For building the package reference the [related tutorial](./build_package). Before building for a release make sure you increment the version number in the `setup.py` and the `README.md` files. Then run:
+For building the package reference the [related tutorial](./build_package.md). Before building for a release make sure you increment the version number in the `setup.py` and the `README.md` files. Then run:
 ```
 python3 setup.py sdist bdist_wheel
 ```
