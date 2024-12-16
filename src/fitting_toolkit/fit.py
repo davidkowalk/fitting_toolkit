@@ -76,7 +76,7 @@ def curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = Non
         covariance (np.ndarray): Covariance matrix of fitted parameters
     """
 
-    if theta_0 == None:
+    if theta_0 is None:
         theta_0 = np.zeros(model.__code__.co_argcount -1)
 
     result = minimize(neg_log_likelyhood, theta_0, args=(model, xdata, ydata, yerror, xerror), **kwargs)

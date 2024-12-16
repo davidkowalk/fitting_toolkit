@@ -1,6 +1,7 @@
 import unittest
+from unittest.mock import patch
 import numpy as np
-from src.fitting_toolkit import plot_fit, curve_fit
+from src.fitting_toolkit.fitting_toolkit import plot_fit, curve_fit
 
 """
 Runs Tests for ./src/fitting_toolkit.py
@@ -43,3 +44,28 @@ class UnitTests(unittest.TestCase):
 
         fig, ax = plot_fit(x, y, fit, yerror=dy)
         fig.savefig("./tests/plot.png")
+
+    def test_infinite_covariance_warning(self):
+
+        def mock_curve_fit(*args, **kwargs):
+            """Mock function to simulate infinite covariance matrix in curve_fit."""
+            params = np.array([1.0, 1.0])
+            cov = np.array([[np.inf, 0], [0, np.inf]])
+            return params, cov
+
+        def model(x, a, b):
+            return a * x + b
+        
+        xdata = np.array([1, 2, 3, 4, 5])
+        ydata = model(xdata, 2, 1)
+        yerror = np.array([0.1] * len(xdata))
+
+        with patch('src.fitting_toolkit.fitting_toolkit.curve_fit_scipy', wraps=mock_curve_fit):
+            with self.assertWarns(RuntimeWarning) as cm:
+                fit = curve_fit(
+                    model, xdata, ydata, yerror=yerror
+                )
+            
+            self.assertIn("Covariance matrix includes infinite values", str(cm.warning))
+            self.assertIsNone(fit.lower)
+            self.assertIsNone(fit.upper)

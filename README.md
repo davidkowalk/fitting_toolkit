@@ -1,5 +1,5 @@
 ![GitHub License](https://img.shields.io/github/license/davidkowalk/fitting_toolkit)
-![Version](https://img.shields.io/badge/version-1.0.2-green)
+![Version](https://img.shields.io/badge/version-1.0.3-green)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/davidkowalk/fitting_toolkit)
 ![GitHub Repo stars](https://img.shields.io/github/stars/davidkowalk/fitting_toolkit?style=flat&label=github%20stars)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/fitting-toolkit?label=pip%20installs)\
@@ -29,6 +29,12 @@ pip install fitting-toolkit
 If you need a specific version (for example due to compatibillity issues) you can specify the version via `fitting-toolkit==version`, e.g:
 ```
 pip install fitting-toolkit==1.0.1
+```
+
+You can test, whether the package was installed properly via:
+```py
+import fitting_toolkit as ft
+ft.version()
 ```
 
 ### Alternative Installation Methods

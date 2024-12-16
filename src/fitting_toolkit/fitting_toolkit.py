@@ -2,8 +2,12 @@ from scipy.optimize import curve_fit as curve_fit_scipy
 import numpy as np
 from matplotlib import pyplot as plt
 
-from fit import curve_fit_mle, fit_distribution_mle, fit_distribution_anneal
-from utils import generate_thresholds, get_sigma_probability, generate_gaussian_mix
+from .fit import curve_fit_mle, fit_distribution_mle, fit_distribution_anneal
+from .utils import generate_thresholds, get_sigma_probability, generate_gaussian_mix
+
+import warnings
+
+__all__ = ["Fit", "confidence_interval", "curve_fit", "fit_peaks", "plot_fit"]
 
 class Fit():
     """
@@ -31,7 +35,7 @@ class Fit():
         if self.model is None:
             model = "No model found"
             model_args = ""
-        elif hasattr(model, "__code__"):
+        elif hasattr(self.model, "__code__"):
             model = self.model.__code__.co_name
             model_args = f"({", ".join(self.model.__code__.co_varnames)})"
         else:
@@ -41,7 +45,7 @@ class Fit():
         str_repr = f"""Fit(
     model = {model}{model_args}
     params = ({", ".join(self.params.astype(str))})
-    cov = {'\n\t' + str(self.cov).replace('\n', '\n\t')}
+    cov = {'\n\t' + np.array2string(self.cov, precision=5).replace('\n', '\n\t')}
     axis = array{str(np.shape(self.axis))}
     lower = array{str(np.shape(self.lower))}
     upper = array{str(np.shape(self.upper))}
@@ -51,7 +55,7 @@ class Fit():
     def __repr__(self):
         return self.__str__()
     
-    def reduced_chi_sqrd(self, x: np.ndarray, y:np.ndarray):
+    def reduced_chi_sqrd(self, x: np.ndarray, y:np.ndarray, dy:np.ndarray):
         """
         Calculates the reduced Chi-Squared statistic for fit.
 
@@ -65,7 +69,7 @@ class Fit():
         residuals = y - self.model(x, *self.params)
         nu = len(x) - self.model.__code__.co_argcount + 1
 
-        return np.dot(np.transpose(residuals), residuals)/nu
+        return np.sum(residuals**2/dy**2)/nu
 
 
 # =========================
@@ -163,7 +167,11 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
     else:
         raise ValueError("Unable to specify confidence points")
     
-    lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples, nsigma)
+    if np.inf in cov or -np.inf in cov:
+        warnings.warn("Covariance matrix includes infinite values. This usually occours due to a non convergent loss function, i.e. an unfittable model. Confidence interval could not be calculated.", RuntimeWarning)
+        lower_conf, upper_conf = None, None
+    else:
+        lower_conf, upper_conf = confidence_interval(model, resampled_points, params, cov, resamples, nsigma)
 
     return Fit(model, params, cov, resampled_points, upper_conf, lower_conf)
 
@@ -200,9 +208,7 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
     """
     peak_number = len(peak_estimates)
     if model is None:
-        gauss_mix = generate_gaussian_mix(peak_number)
-    else:
-        gauss_mix = model
+        model = generate_gaussian_mix(peak_number)
 
     if anneal:
 
@@ -221,7 +227,7 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
         bounds = bounds[:-1]
 
         #fit using annealment
-        theta_0 = fit_distribution_anneal(gauss_mix, events, bounds)
+        theta_0 = fit_distribution_anneal(model, events, bounds)
     
     if theta_0 is None:
         #arange parameters appropriately
@@ -236,12 +242,12 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
     
         del(theta_0[-1])
 
-    params, cov = fit_distribution_mle(gauss_mix, events, theta_0)
+    params, cov = fit_distribution_mle(model, events, theta_0)
     return Fit(model, params, cov, None, None, None) #Return without confidence interval
 
 
 
-def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
+def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, line_kwargs = None, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
     """
     Plots the model fit to the data along with its confidence intervals.
 
@@ -258,6 +264,8 @@ def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, ca
         fit_color (color, optional): color of the fitted function.
         markersize (int, optional): The size of the markers for the data points. Default is 4.
         capsize (int, optional): The size of the caps on the error bars. Default is 4.
+        line_kwargs (dict, optional):
+            Additional keyword arguments passed to the `plot` function for customizing line appearance of fit and confidence interval.
         fit_label (str, optional): Label applied to the least square fit.
         confidence_label(str, optional): Label applied to upper confidence threshold.
         fig (matplotlib.pyplot.Figure, optional): Figure Object to use for plotting. If not provided it is either inferred from ax if given or a new object is generated.
@@ -280,9 +288,9 @@ def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, ca
         raise ValueError(f"x-data and y-data have different lengths and thus cannot be broadcast together.\nx: {np.shape(xdata)}, y: {np.shape(ydata)}")
 
 
-    if not(np.shape(fit.axis) == np.shape(fit.lower)):
+    if (not fit.lower is None) and (not np.shape(fit.axis) == np.shape(fit.lower)):
         raise ValueError(f"x-axis does not match length of lower confidence interval\nx: {np.shape(fit.axis)}, y: {np.shape(fit.lower)}")
-    if not(np.shape(fit.axis) == np.shape(fit.upper)):
+    if (not fit.upper is None) and (not np.shape(fit.axis) == np.shape(fit.upper)):
         raise ValueError(f"x-axis does not match length of upper confidence interval\nx: {np.shape(fit.axis)}, y: {np.shape(fit.upper)}")
     
     if fig is None and ax is None:
@@ -299,9 +307,11 @@ def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, ca
         fig = ax.get_figure()
 
     ax.errorbar(xdata, ydata, yerr = yerror, xerr = xerror, fmt=".", linestyle = "", color = fit_color, capsize=capsize, markersize = markersize)
-    ax.plot(fit.axis, fit.model(fit.axis, *fit.params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label)
-    ax.plot(fit.axis, fit.upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label)
-    ax.plot(fit.axis, fit.lower, color = fit_color, linewidth = 0.75, linestyle = "--")
+    ax.plot(fit.axis, fit.model(fit.axis, *fit.params), color = fit_color, linewidth = 1, linestyle = "-", label = fit_label, **line_kwargs)
+    if fit.upper is not None:
+        ax.plot(fit.axis, fit.upper, color = fit_color, linewidth = 0.75, linestyle = "--", label = confidence_label, **line_kwargs)
+    if fit.lower is not None:
+        ax.plot(fit.axis, fit.lower, color = fit_color, linewidth = 0.75, linestyle = "--", **line_kwargs)
 
     return fig, ax
 
