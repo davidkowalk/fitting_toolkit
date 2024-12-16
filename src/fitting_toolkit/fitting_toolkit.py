@@ -247,7 +247,7 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
 
 
 
-def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, line_kwargs = None, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
+def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, line_kwargs = {}, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
     """
     Plots the model fit to the data along with its confidence intervals.
 
