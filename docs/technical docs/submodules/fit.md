@@ -20,6 +20,11 @@ Calculates the negative of the natural logarithm of the probability density (lik
 | y        | np.ndarray / float | Values of y-data
 | yerror   | np.ndarray / float | Standard deviations on y-data
 
+| Parameters | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| p        | np.ndarray / float  | Likelyhood for each event
+
 Provides the calculation
 
 $$
@@ -45,6 +50,11 @@ Calculates the negative of the natural logarithm of the probability density (lik
 | xerror   | np.ndarray / float | Standard deviations on x-data
 | yerror   | np.ndarray / float | Standard deviations on y-data
 
+| Parameters | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| p        | np.ndarray / float  | Likelyhood for each event
+
 Note that this function is considerably more computationally expensive than `neg_log_likelihood_per_point_yerr()`.
 
 Provides the calculation
@@ -53,7 +63,7 @@ $$
 -\ln p(y_i | \theta)_{f, \sigma_y, \sigma_x} = -\ln \int _{-\infty} ^\infty du_i \frac{1}{2\pi\sigma _{y,i}\sigma _{x,i}} \exp\left(-\frac{(y_i-f(u_i, \theta))^2}{2\sigma _{y,i}^2} -\frac{(x_i - u_i)^2}{2\sigma _{x,i}^2}\right)
 $$
 
-## fitting_toolkit.fit.neg_log_likelyhood
+## fitting_toolkit.fit.neg_log_event_likelyhood
 ```python
 neg_log_likelyhood(theta, model, x, y, yerror, xerror = None)
 ```
@@ -74,6 +84,12 @@ If the error in x is negligable it should be omitted for performance reasons.
 | yerror   | np.ndarray / float | Standard deviations on y-data
 | xerror   | np.ndarray / float (optional) | Standard deviations on x-data
 
+
+| Parameters | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| p        | np.ndarray / float  | Likelyhood for each event
+
 While standard deviation in y is required the standard deviation in x is optional. The appropriate function per point is automatically selected. If the error in x is negligable it should be omitted for performance reasons.
 
 ## fitting_toolkit.fit.curve_fit_mle
@@ -93,3 +109,52 @@ Standard deviation in y is required, standard deviation in x is optional. If the
 | xerror   | np.ndarray / float (optional) | Standard deviations on x-data
 | theta_0  | np.ndarray (optional) | Initial guess for parameters. If not provided all parameters are initially guessed to be zero.
 | **kwargs | | Additional key word arguments passed onto scipy.optimize.minimize
+
+
+| Parameters | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| params   |np.ndarray| Best fit parameters
+| cov      |np.ndarray or scipy.sparse.linalg.LinearOperator | Covariance matrix of parameters
+
+
+## fitting_toolkit.fit.neg_log_event_likelyhood
+
+```py
+neg_log_event_likelyhood(model, event, theta)
+```
+
+Calculates the element wise likelyhood of a event occuring with a model given the parameters theta.
+
+| Parameters | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| model    | function | Model to be tested
+| event    | float or np.ndarray | Events for which likelyhood is to be calculated
+| theta    | list or list-like | List of parameters used in model
+
+
+## fitting_toolkit.fit.fit_distribution_anneal
+```py
+fit_distribution_anneal(model, events, bounds, data_range = None, **kwargs)
+```
+
+Finds optimal parameters for probability distribution via maximum likelyhood estimation using simulated annealing.
+Let events x be measurements of a random variable which are independent and identically distributed with probability density p(x, *theta).
+This function finds the parameters with the highest cumulative negative logarithm of the probability density.
+
+
+| Parameters | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| model    | function | Distribution to be fitted
+| events   | np.ndarray| Elements observed
+| bounds   | scipy.Bounds or Sequence of (min, max) pairs | Bounds for variables.
+| data_range | tuple | Interval in which events are fit.
+| **kwargs || Additional arguments passed to scipy.optimize.minimizer
+
+| Returns |||
+|---------|----------|-----------------|
+| **Name**| **Type** | **Description** |
+| params  | np.ndarray | Best fit parameters
+| cov     | np.ndarray or scipy.sparse.linalg.LinearOperator | Covariance matrix of parameters
