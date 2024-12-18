@@ -23,7 +23,7 @@ For a detailed description please reference the technical docs. The basic object
 def model(x, **theta)
 ```
 
-The builtin fittin functions can handle an arbitrary number of arguments:
+The builtin fitting functions can handle an arbitrary number of arguments:
 ```py
 def model(x, a, b, c, ...)
 ```
