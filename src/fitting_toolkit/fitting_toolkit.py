@@ -176,7 +176,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
     return Fit(model, params, cov, resampled_points, upper_conf, lower_conf)
 
 
-def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, anneal = False, model = None, **kwargs):
+def fit_peaks(events, peak_estimates = None, peak_limits = None, sigma_init=None, theta_0 = None, anneal = False, model = None, local_options = {}, anneal_options = {}):
     """
     Fits a mixture of Gaussian peaks to a given set of events using maximum likelihood estimation (MLE) 
     or simulated annealing for initial parameter optimization.
@@ -210,6 +210,24 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
     if model is None:
         model = generate_gaussian_mix(peak_number)
 
+    # Catch Unusable set of parameters
+    if anneal:
+        if peak_limits is None:
+            raise ValueError("peak_limits is None. Bounds must be provided for annealing")
+        if sigma_init is None:
+            raise ValueError("sigma_init is None. Bounds must be provided for annealing")
+        if peak_estimates is None:
+            raise ValueError("Must provide peak_estimates for annealing.")
+        if theta_0 is not None:
+            warnings.warn("Initial parameters for local optimization are set by annealing and are ignored.")
+    else:
+        if peak_limits is not None:
+            warnings.warn("Bounds for local optimization cannot be automatically generated. Pass via anneal_options")
+        if sigma_init is not None and theta_0 is not None:
+            warnings.warn("Provided both sigma_init and theta_0. sigma_init will be overwritten.")
+        if theta_0 is None and (peak_estimates is None or sigma_init is None):
+            raise ValueError("Must provide either full set of initial parameters theta_0 or initial peak_estimates and sigma_init")
+
     if anneal:
 
         min_sigma = np.min(np.abs(events - np.roll(events, 1)))
@@ -227,7 +245,7 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
         bounds = bounds[:-1]
 
         #fit using annealment
-        theta_0 = fit_distribution_anneal(model, events, bounds)
+        theta_0 = fit_distribution_anneal(model, events, bounds, **anneal_options)
     
     if theta_0 is None:
         #arange parameters appropriately
@@ -242,7 +260,7 @@ def fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, a
     
         del(theta_0[-1])
 
-    params, cov = fit_distribution_mle(model, events, theta_0)
+    params, cov = fit_distribution_mle(model, events, theta_0, **local_options)
     return Fit(model, params, cov, None, None, None) #Return without confidence interval
 
 
