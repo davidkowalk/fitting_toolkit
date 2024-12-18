@@ -75,11 +75,28 @@ Many statistical processes require us to fit a probability distribution to a set
 Let `events` be a set of measurements of a random variable.
 
 ```py
-fit = fitting_toolkit.fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, anneal = False, model = None, **kwargs)
+fit = fitting_toolkit.fit_peaks(events, peak_estimates = None, peak_limits = None, sigma_init=None, theta_0 = None, anneal = False, model = None, local_options = {}, anneal_options = {})
 ```
 
 The functionality of peak fitting is fundamentally determined by the `anneal` parameter, which decides whether [simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing) should be used to find a set of initial parameters close to the global maximum in parameter space.
 
-### Fit without Simulated Annealing 
+### Fit with Local Minimization
+
+Most common optimization problems are convex, which means that they have 1 optimal state better than all other optimal states and a state closer to the optimum is always better than a state further from the optimum.
+
+One of these is the single gaussian curve. In these cases the local minimizer is sufficient for finding the optimal set of parameters. Run:
+
+```py
+fit = fitting_toolkit.fit_peaks(events, peak_estimates, sigma_init, local_options = {})
+```
+Optionally you can supply a full set of initial parameters `theta_0`. In this case `sigma_init` may be omitted. Bounds can be passed via `local_options`.
 
 ### Fit with Simulated Annealing
+
+
+[Simulated annealing](https://en.wikipedia.org/wiki/Simulated_annealing) is an iterative optimization method for finding global optima in a constrained subspace. It is a computationally more expensive than local minimization and should be used for problems with non-convex optimization functions in parameter space. Usual examples are Gaussian fits with multiple peaks.
+
+To use the simulated annealing call:
+```py
+fit = fitting_toolkit.fit_peaks(events, peak_estimates, peak_limits, sigma_init, anneal = True, annealing_options = {})
+```
