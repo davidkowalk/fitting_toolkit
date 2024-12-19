@@ -20,4 +20,5 @@ Maintainers and Contributors may be particularily interested in
 
 For further reading about the mathematical foundations check out
 - [Introduction to Maximum Likelyhood Estimation](./resources/max_likelyhood_est.md)
-- [Literature and Further Reading](./resources/literature.md)
+- [Literature](./resources/literature.md)
+- [Further Reading](./resources/further%20reading.md)

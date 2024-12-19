@@ -100,3 +100,87 @@ To use the simulated annealing call:
 ```py
 fit = fitting_toolkit.fit_peaks(events, peak_estimates, peak_limits, sigma_init, anneal = True, annealing_options = {})
 ```
+
+## Submodule fitting_toolkit.fit
+
+The submodule `fitting_toolkit.fit` contains all functions for fitting not covered by `scipy`.
+This section covers notable use cases. For a more detailed description reference the [technical documentation](../../technical%20docs/submodules/fit.md).
+
+### fitting_toolkit.fit.curve_fit_mle
+
+To call the mle implementation directly without generating a confidence interval call
+```py
+params, cov = fitting_toolkit.fit.curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = None, xerror = None, **kwargs)
+```
+
+Fits model curve to (xdata, ydata) using maximum likelyhood estimate.
+Standard deviation in y is required, standard deviation in x is optional. If the error in x is negligable it should be omitted for performance reasons. Returns `params, cov`
+
+**Example:**
+```py
+from fitting_toolkit.fit import curve_fit_mle as curve_fit
+x_data = np.array([...])
+y_data = np.array([...])
+
+#Define a 1% Error
+y_error = 0.01*y_data
+x_error = 0.01*x_data #(Optional)
+
+def model(x, a, b):
+    return a * x + b
+
+params, cov = curve_fit(model, x_data, y_data, xerror = x_error, yerror = y_error)
+```
+
+### fitting_toolkit.fit.fit_distribution_mle
+
+Fits a probability distribution to a set of events using maximum likelyhood estimation with `scipy.optimize.minimize`.
+
+```py
+params, cov = fitting_toolkit.fit.fit_distribution_mle(model, events:np.array, theta_0:np.ndarray = None, data_range = None, **kwargs)
+```
+
+**Examle:**
+```py
+from fitting_toolkit.fit import fit_distribution_mle as fit_peak
+import numpy as np
+events = np.array([...]) # Measurements of random variable
+
+#define normal distribution
+def model(x, mu, sigma):
+    return np.exp(-((x - mu)/sigma)**2)/np.sqrt(2**np.pi*sigma**2)
+
+params, cov = fit_peak(model, events)
+```
+
+To only fit events in a certain range use
+```py
+data_range = (min, max)
+```
+
+### fitting_toolkit.fit.fit_distribution_anneal
+
+Fits a probability distribution to a set of events using maximum likelyhood estimation with `scipy.optimize.dual_annealing`. Does not compute the covariance matrix!
+
+```py
+params = fit_distribution_anneal(model, events, bounds, data_range = None, **kwargs)
+```
+
+**Example**:
+```py
+from fitting_toolkit.fit import fit_distribution_anneal as fit_peak
+import numpy as np
+events = np.array([...]) # Measurements of random variable
+bounds = ((min_mu, max_u), (min_sigma, max_sigma))
+
+#define normal distribution
+def model(x, mu, sigma):
+    return np.exp(-((x - mu)/sigma)**2)/np.sqrt(2**np.pi*sigma**2)
+
+params = fit_peak(model, events, bounds)
+```
+
+To only fit events in a certain range use
+```py
+data_range = (min, max)
+```
