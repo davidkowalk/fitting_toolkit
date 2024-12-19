@@ -110,7 +110,7 @@ This section covers notable use cases. For a more detailed description reference
 
 To call the mle implementation directly without generating a confidence interval call
 ```py
-fitting_toolkit.fit.curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = None, xerror = None, **kwargs)
+params, cov = fitting_toolkit.fit.curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = None, xerror = None, **kwargs)
 ```
 
 Fits model curve to (xdata, ydata) using maximum likelyhood estimate.
@@ -130,4 +130,57 @@ def model(x, a, b):
     return a * x + b
 
 params, cov = curve_fit(model, x_data, y_data, xerror = x_error, yerror = y_error)
+```
+
+### fitting_toolkit.fit.fit_distribution_mle
+
+Fits a probability distribution to a set of events using maximum likelyhood estimation with `scipy.optimize.minimize`.
+
+```py
+params, cov = fitting_toolkit.fit.fit_distribution_mle(model, events:np.array, theta_0:np.ndarray = None, data_range = None, **kwargs)
+```
+
+**Examle:**
+```py
+from fitting_toolkit.fit import fit_distribution_mle as fit_peak
+import numpy as np
+events = np.array([...]) # Measurements of random variable
+
+#define normal distribution
+def model(x, mu, sigma):
+    return np.exp(-((x - mu)/sigma)**2)/np.sqrt(2**np.pi*sigma**2)
+
+params, cov = fit_peak(model, events)
+```
+
+To only fit events in a certain range use
+```py
+data_range = (min, max)
+```
+
+### fitting_toolkit.fit.fit_distribution_anneal
+
+Fits a probability distribution to a set of events using maximum likelyhood estimation with `scipy.optimize.dual_annealing`. Does not compute the covariance matrix!
+
+```py
+params = fit_distribution_anneal(model, events, bounds, data_range = None, **kwargs)
+```
+
+**Example**:
+```py
+from fitting_toolkit.fit import fit_distribution_anneal as fit_peak
+import numpy as np
+events = np.array([...]) # Measurements of random variable
+bounds = ((min_mu, max_u), (min_sigma, max_sigma))
+
+#define normal distribution
+def model(x, mu, sigma):
+    return np.exp(-((x - mu)/sigma)**2)/np.sqrt(2**np.pi*sigma**2)
+
+params = fit_peak(model, events, bounds)
+```
+
+To only fit events in a certain range use
+```py
+data_range = (min, max)
 ```
