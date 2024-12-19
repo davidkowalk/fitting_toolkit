@@ -100,3 +100,34 @@ To use the simulated annealing call:
 ```py
 fit = fitting_toolkit.fit_peaks(events, peak_estimates, peak_limits, sigma_init, anneal = True, annealing_options = {})
 ```
+
+## Submodule fitting_toolkit.fit
+
+The submodule `fitting_toolkit.fit` contains all functions for fitting not covered by `scipy`.
+This section covers notable use cases. For a more detailed description reference the [technical documentation](../../technical%20docs/submodules/fit.md).
+
+### fitting_toolkit.fit.curve_fit_mle
+
+To call the mle implementation directly without generating a confidence interval call
+```py
+fitting_toolkit.fit.curve_fit_mle(model, xdata: np.array, ydata: np.array, yerror, theta_0 = None, xerror = None, **kwargs)
+```
+
+Fits model curve to (xdata, ydata) using maximum likelyhood estimate.
+Standard deviation in y is required, standard deviation in x is optional. If the error in x is negligable it should be omitted for performance reasons. Returns `params, cov`
+
+**Example:**
+```py
+from fitting_toolkit.fit import curve_fit_mle as curve_fit
+x_data = np.array([...])
+y_data = np.array([...])
+
+#Define a 1% Error
+y_error = 0.01*y_data
+x_error = 0.01*x_data #(Optional)
+
+def model(x, a, b):
+    return a * x + b
+
+params, cov = curve_fit(model, x_data, y_data, xerror = x_error, yerror = y_error)
+```
