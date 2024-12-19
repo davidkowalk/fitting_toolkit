@@ -98,7 +98,46 @@ fig, ax = plot_fit(x, y, model, fit, fit_color = "crimson", fit_label="data labe
 
 You may set the color of the graph with the `fit_color` attribute. To label your data pass a `fit_label` and a `confidence_label` or pass `None`to remove them.
 
-## Generate a Graphic with Multiple Plots 
+## Generate a Graphic with Multiple Plots
+
+You may use `plt.subplots()` to create a figure with multiple subplots. Reference the matplotlib [documentation](https://matplotlib.org/stable/gallery/subplots_axes_and_figures/subplots_demo.html) for a detailed description. Pass the figure and the axis object to `plot_fit` to define the axes to be used.
+
+**Example for Stacked Graphs in the y-Direction**:
+```py
+from matplotlib import pyplot as plt
+from fitting_toolkit import plot_fit
+#2 graphs in the y direction
+fig, (ax1, ax2) = plt.subplots(2)
+
+plot_fit(xdata1, ydata1, fit1, fig = fig, ax = ax1)
+plot_fit(xdata2, ydata2, fit2, fig = fig, ax = ax1)
+plt.show()
+```
+
+**Example for Stacked Graphs in the x-Direction**:
+```py
+from matplotlib import pyplot as plt
+from fitting_toolkit import plot_fit
+#2 graphs in the x direction
+fig, (ax1, ax2) = plt.subplots(1, 2)
+
+plot_fit(xdata1, ydata1, fit1, fig = fig, ax = ax1)
+plot_fit(xdata2, ydata2, fit2, fig = fig, ax = ax1)
+plt.show()
+```
+
+**Example for Staking Subplots in 2 Directions**
+```py
+from matplotlib import pyplot as plt
+from fitting_toolkit import plot_fit
+fig, ax = plt.subplots(1, 2)
+
+plot_fit(xdata1, ydata1, fit1, fig = fig, ax = ax[0, 0])
+plot_fit(xdata2, ydata2, fit2, fig = fig, ax = ax[0, 1])
+plot_fit(xdata3, ydata3, fit3, fig = fig, ax = ax[1, 0])
+plot_fit(xdata4, ydata4, fit4, fig = fig, ax = ax[1, 1])
+plt.show()
+```
 
 ## Using Custom Graphics
 
