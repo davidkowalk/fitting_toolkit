@@ -20,7 +20,7 @@ Calculates the negative of the natural logarithm of the probability density (lik
 | y        | np.ndarray / float | Values of y-data
 | yerror   | np.ndarray / float | Standard deviations on y-data
 
-| Parameters | | |
+| Returns | | |
 |----------|----------|-----------------|
 | **Name** | **Type** | **Description** |
 | p        | np.ndarray / float  | Likelyhood for each event
@@ -50,7 +50,7 @@ Calculates the negative of the natural logarithm of the probability density (lik
 | xerror   | np.ndarray / float | Standard deviations on x-data
 | yerror   | np.ndarray / float | Standard deviations on y-data
 
-| Parameters | | |
+| Returns | | |
 |----------|----------|-----------------|
 | **Name** | **Type** | **Description** |
 | p        | np.ndarray / float  | Likelyhood for each event
@@ -85,7 +85,7 @@ If the error in x is negligable it should be omitted for performance reasons.
 | xerror   | np.ndarray / float (optional) | Standard deviations on x-data
 
 
-| Parameters | | |
+| Returns | | |
 |----------|----------|-----------------|
 | **Name** | **Type** | **Description** |
 | p        | np.ndarray / float  | Likelyhood for each event
@@ -111,7 +111,7 @@ Standard deviation in y is required, standard deviation in x is optional. If the
 | **kwargs | | Additional key word arguments passed onto scipy.optimize.minimize
 
 
-| Parameters | | |
+| Returns | | |
 |----------|----------|-----------------|
 | **Name** | **Type** | **Description** |
 | params   |np.ndarray| Best fit parameters
@@ -133,6 +133,10 @@ Calculates the element wise likelyhood of a event occuring with a model given th
 | event    | float or np.ndarray | Events for which likelyhood is to be calculated
 | theta    | list or list-like | List of parameters used in model
 
+| Returns | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| p        | np.ndarray / float  | Likelyhood for each event
 
 ## fitting_toolkit.fit.fit_distribution_anneal
 ```py
