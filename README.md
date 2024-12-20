@@ -75,6 +75,18 @@ pip install -r requirements.txt
 
 For an introductory explanation and tutorials please reference the [documentation](./docs/manual%20and%20instructions/README.md).
 
+## How to Support the Fitting Toolkit
+
+The Fitting Toolkit is published on GitHub under the MIT License.
+It is built and maintained by volunteers. There are multiple ways to contribute:
+
+1. **Share And Boost The Project**\
+The easiest way to support the project is to show your colleges and friends how to use it. One big way to help is to mark the project with a star on GitHub. This helps to stay on the front page in developer forums and to attract new contributors.
+2. **Write an Issue**\
+The repository is being actively maintained. When you find a bug or miss a feature you can write an [issue](https://github.com/davidkowalk/fitting_toolkit/issues).
+3. **Do it yourself**\
+The fitting toolkit is always looking for contributors. Fork the repository, make your changes and submit a pull request. A good place to start if you're looking to contribute are the ["good first issue"](https://github.com/davidkowalk/fitting_toolkit/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) and  ["help wanted"](https://github.com/davidkowalk/fitting_toolkit/issues?q=is%3Aopen+is%3Aissue+label%3A%22help+wanted%22) sections
+
 ## Literature:
 [1] Vugrin, K. W., L. P. Swiler, R. M. Roberts, N. J. Stucky-Mack, and S. P. Sullivan (2007), Confidence region estimation techniques for nonlinear regression in groundwater flow: Three case studies, Water Resour. Res., 43, W03423, https://doi.org/10.1029/2005WR004804. \
 [2] Dennis D. Boos. "Introduction to the Bootstrap World." Statist. Sci. 18 (2) 168 - 174, May 2003. https://doi.org/10.1214/ss/1063994971
