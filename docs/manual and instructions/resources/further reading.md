@@ -7,4 +7,5 @@ This document compiles a list of resources and books that are usefuk to learning
 |               Title              |       Author       | Year | Links And Reference |
 |----------------------------------|--------------------|:----:|---------------------|
 | An Introduction to the Bootstrap | Efron / Tibshirani | 1993 | [Internet Archive](https://archive.org/details/introductiontobo0000efro/), ISBN: 0-412-04231-2
+| The Art of Data Science          | Peng / Matsui      | 2018 | ISBN: 1365061469
 
