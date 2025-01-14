@@ -91,6 +91,27 @@ fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, annea
 | **Name** | **Type** | **Description** |
 | fit      | fitting_toolkit.Fit | Wrapper object containing the fitted model, fit results and confidence interval. 
 
+## fitting_toolkit.custom_fit
+Allows fitting of function with arbitrary input dimensions. 
+```
+custom_fit(model, input, output, sigma, theta_0, **kwargs)
+```
+| Parameters | | |
+|----------|------------|-----------------|
+| **Name** |  **Type**  | **Description** |
+| model    | callable   | A function representing the model to be fitted. It should take input data and model parameters as arguments and return the predicted output.
+| input    | np.ndarray | The input data to the model, of shape `(n, m)`.
+| output   | np.ndarray | The observed output data, of shape `(n,)`.
+| sigma    | np.ndarray or float | The weights for the weighted least squares loss, typically representing the standard deviations of the errors.
+| theta_0  | np.ndarray | The initial guess for the model parameters to be optimized.
+| **kwargs |            | Additional arguments to be passed to `scipy.optimize.minimize`.
+
+| Returns  | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| popt     | np.ndarray | List of optimal parameters
+| pcov     | np.ndarray | Covariance Matrix
+
 ## fitting_toolkit.plot_fit
 
 The fitting toolkit ships with built-in functions for displaying data with their fitted functions and their respective confidence intervals.
