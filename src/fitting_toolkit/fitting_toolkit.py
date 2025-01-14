@@ -263,7 +263,47 @@ def fit_peaks(events, peak_estimates = None, peak_limits = None, sigma_init=None
     params, cov = fit_distribution_mle(model, events, theta_0, **local_options)
     return Fit(model, params, cov, None, None, None) #Return without confidence interval
 
+def custom_fit(model, input, output, sigma, theta_0, **kwargs):
+    """
+    Provides functionality to to fit a model of shape (n,m) -> float via weighted least fitting.
 
+    Args
+    model : callable
+        A function representing the model to be fitted. It should take 
+        input data and model parameters as arguments and return the 
+        predicted output.
+    input : np.ndarray
+        The input data to the model, of shape `(n, m)`.
+    output : np.ndarray
+        The observed output data, of shape `(n,)`.
+    sigma : np.ndarray or float
+        The weights for the weighted least squares loss, typically 
+        representing the standard deviations of the errors.
+    theta_0 : np.ndarray
+        The initial guess for the model parameters to be optimized.
+    **kwargs : dict, optional
+        Additional arguments to be passed to `scipy.optimize.minimize`.
+
+    Returns
+        popt: The optimized model parameters.
+        pcov: The inverse of the Hessian matrix at the solution, which can provide an estimate of the covariance of the parameters.
+
+    Notes:
+    ------
+    The optimization minimizes the weighted sum of squared residuals 
+    between the observed and predicted outputs. It uses `scipy.optimize.minimize` 
+    for the fitting process.
+    """
+
+    from scipy.optimize import minimize
+    #xdata = np.ravel(input)
+
+    def loss_function(parameters):
+        #print(np.shape(parameters))
+        return np.sum((output - model(input, *parameters))**2/sigma**2)
+    
+    result =  minimize(loss_function, theta_0, **kwargs)
+    return result.x, result.hess_inv
 
 def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, line_kwargs = {}, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
     """
