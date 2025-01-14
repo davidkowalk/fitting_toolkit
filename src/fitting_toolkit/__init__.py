@@ -9,7 +9,7 @@ Modules:
 
 from . import fit
 from . import utils
-from .fitting_toolkit import Fit, confidence_interval, curve_fit, fit_peaks, plot_fit, custom_fit
+from .fitting_toolkit import Fit, confidence_interval, curve_fit, fit_peaks, plot_fit, multivariate_fit
 from .utils import versions, version, stats
 
 # Define __all__ to specify what gets imported with "from fitting_toolkit import *"
