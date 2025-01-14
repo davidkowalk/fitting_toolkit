@@ -101,6 +101,38 @@ To use the simulated annealing call:
 fit = fitting_toolkit.fit_peaks(events, peak_estimates, peak_limits, sigma_init, anneal = True, annealing_options = {})
 ```
 
+## Fit with Arbitrary Input Dimensions
+
+To fit a model with inputs of arbitrary shape $\mathbb{R}^n \rightarrow \mathbb R$ use `fitting_toolkit.custom_fit()`. Note that arbitrary input shapes are not currently supported by `fitting_toolkit.plot_fit` or the `fitting_toolkit.Fit` object. First define a model of the shape:
+
+```py
+def model(input_data, *params):
+    (...)
+    return output
+```
+
+Where `input_data` encodes the preimage (or domain) of the function. This set is then followed by an arbitrary set of parameters. The function should return the image. The easiest way to achieve this is `numpy.meshgrid`.
+
+```py
+x = np.linspace(0,5, 100)
+y = np.linspace(0,5, 100)
+
+xy = np.meshgrid(x, y)
+```
+
+For example, to fit a 2D Gaussian define a function as such:
+```py
+def model(xy, A, x0, y0, sx, sy):
+    return A * np.exp( -0.5 * (((xy[0] - x0)/sx)**2 + ((xy[1] - y0) / sy)**2))
+```
+
+Let `z` be the image to be fitted against and `dz` be the standard deviation on z. Specify an initial guess at the parameters `theta_0`. The optimal parameters and the corresponding covariance matrix can be calculated via:
+
+```py
+popt, pcov = fitting_toolkit.custom_fit(model, xy_data, z, dz, theta_0)
+```
+
+
 ## Submodule fitting_toolkit.fit
 
 The submodule `fitting_toolkit.fit` contains all functions for fitting not covered by `scipy`.
