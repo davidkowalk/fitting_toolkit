@@ -263,7 +263,7 @@ def fit_peaks(events, peak_estimates = None, peak_limits = None, sigma_init=None
     params, cov = fit_distribution_mle(model, events, theta_0, **local_options)
     return Fit(model, params, cov, None, None, None) #Return without confidence interval
 
-def custom_fit(model, input, output, sigma, theta_0, **kwargs):
+def multivariate_fit(model, input, output, sigma, theta_0, **kwargs):
     """
     Provides functionality to to fit a model of shape (n,m) -> float via weighted least fitting.
 

@@ -103,7 +103,7 @@ fit = fitting_toolkit.fit_peaks(events, peak_estimates, peak_limits, sigma_init,
 
 ## Fit with Arbitrary Input Dimensions
 
-To fit a model with inputs of arbitrary shape $\mathbb{R}^n \rightarrow \mathbb R$ use `fitting_toolkit.custom_fit()`. Note that arbitrary input shapes are not currently supported by `fitting_toolkit.plot_fit` or the `fitting_toolkit.Fit` object. First define a model of the shape:
+To fit a model with inputs of arbitrary shape $\mathbb{R}^n \rightarrow \mathbb R$ use `fitting_toolkit.multivariate_fit()`. Note that arbitrary input shapes are not currently supported by `fitting_toolkit.plot_fit` or the `fitting_toolkit.Fit` object. First define a model of the shape:
 
 ```py
 def model(input_data, *params):
@@ -129,7 +129,7 @@ def model(xy, A, x0, y0, sx, sy):
 Let `z` be the image to be fitted against and `dz` be the standard deviation on z. Specify an initial guess at the parameters `theta_0`. The optimal parameters and the corresponding covariance matrix can be calculated via:
 
 ```py
-popt, pcov = fitting_toolkit.custom_fit(model, xy_data, z, dz, theta_0)
+popt, pcov = fitting_toolkit.multivariate_fit(model, xy_data, z, dz, theta_0)
 ```
 
 

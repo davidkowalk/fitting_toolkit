@@ -91,10 +91,10 @@ fit_peaks(events, peak_estimates, peak_limits, sigma_init, theta_0 = None, annea
 | **Name** | **Type** | **Description** |
 | fit      | fitting_toolkit.Fit | Wrapper object containing the fitted model, fit results and confidence interval. 
 
-## fitting_toolkit.custom_fit
+## fitting_toolkit.multivariate_fit
 Allows fitting of function with arbitrary input dimensions. 
 ```
-custom_fit(model, input, output, sigma, theta_0, **kwargs)
+multivariate_fit(model, input, output, sigma, theta_0, **kwargs)
 ```
 | Parameters | | |
 |----------|------------|-----------------|
