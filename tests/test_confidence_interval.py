@@ -96,6 +96,3 @@ class TestConfidenceInterval(unittest.TestCase):
         #Compare Coverage
         tolerance = 0.02
         self.assertAlmostEqual(empirical_coverage, expected_coverage, delta=tolerance, msg=f"\nEmpirical coverage {empirical_coverage:.3f} does not match expected {expected_coverage:.3f}")
-
-if __name__ == '__main__':
-    unittest.main()

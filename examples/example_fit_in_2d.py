@@ -25,7 +25,7 @@ print(np.sqrt(np.diag(pcov)))
 
 # Display Data and fit
 from matplotlib import pyplot as plt
-plt.pcolormesh(x, y, z)
+plt.pcolormesh(x, y, z, cmap = "plasma")
 #plt.contour(x, y, z, 6, colors = "gray")
 plt.contour(x, y, model(xy_data, *popt), 5, colors = "black")
 plt.show()
