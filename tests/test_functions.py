@@ -344,3 +344,22 @@ class TestFitPeaks(unittest.TestCase):
         peak1, peak2 = result.params[0], result.params[3]
         self.assertAlmostEqual(peak1, 0, delta=0.5)
         self.assertAlmostEqual(peak2, 5, delta=0.5)
+
+from src.fitting_toolkit import plot_fit
+class TestPlotting(unittest.TestCase):
+    def test_errors(self):
+
+        def mock_model(x, a, b):
+            return x*a+b
+        
+        fit = Fit(mock_model, [1, 0], None, np.linspace(0, 1, 10), np.linspace(0,1,10), None)
+        with self.assertRaises(ValueError):
+            plot_fit(np.linspace(0, 1, 10), np.linspace(0, 1, 11), fit)
+        
+        fit = Fit(mock_model, [1, 0], None, np.linspace(0, 1, 10), np.linspace(0,1,11), None)
+        with self.assertRaises(ValueError):
+            plot_fit(np.linspace(0, 1, 10), np.linspace(0, 1, 10), fit)
+        
+        fit = Fit(mock_model, [1, 0], None, np.linspace(0, 1, 10), None, np.linspace(0,1,11))
+        with self.assertRaises(ValueError):
+            plot_fit(np.linspace(0, 1, 10), np.linspace(0, 1, 10), fit)
