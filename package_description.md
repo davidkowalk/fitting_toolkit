@@ -33,8 +33,7 @@ pip install fitting-toolkit==1.0.1
 To install the current development version ahead of releases check out the development branches on GitHub.
 | Branch          | Purpose
 |-----------------|-------------
-| development-1.0 | Bug fixes and documentation adding onto version 1.0.1
-| development-1.1 | Development of new major features
+| development-1.1 | Bug fixes and documentation adding onto version 1.1.0
 
 After downloading the desired version you can find the `fitting_toolkit.py` in the `src` folder and copy it into your project.
 
@@ -83,14 +82,14 @@ def f(x, a, b):
 ```
 We can now fit the model to the data:
 ```python
-params, cov, lower_conf, upper_conf = curve_fit(f, x, y, yerror=dy)
+fit = curve_fit(f, x, y, yerror=dy)
 ```
 This functions returns 4 arrays. First the parameters of the model, the covariance matrix of those parameters and then the lower and upper limits of the confidence interval around the fit. Note that the confidence interval is absolute. To get the error in relation to the fitted function you would need to find the difference at each point.
 
 The resulting fit can now be plotted. This toolkit provides a premade function to generate plots:
 ```python
 from matplotlib import pyplot as plt
-fig, ax = plot_fit(x, y, f, params, lower_conf, upper_conf, xerror=dx, yerror=dy)
+fig, ax = plot_fit(x, y, fit, xerror=dx, yerror=dy)
 plt.show()
 ```
 Note that the fitted function is not automatically displayed. Instead the figure and axis-objects are returned.

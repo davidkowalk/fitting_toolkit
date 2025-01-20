@@ -1,5 +1,5 @@
 ![GitHub License](https://img.shields.io/github/license/davidkowalk/fitting_toolkit)
-![Version](https://img.shields.io/badge/version-1.0.3-green)
+![Version](https://img.shields.io/badge/version-1.1.0-green)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/davidkowalk/fitting_toolkit)
 ![GitHub Repo stars](https://img.shields.io/github/stars/davidkowalk/fitting_toolkit?style=flat&label=github%20stars)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/fitting-toolkit?label=pip%20installs)\
@@ -46,8 +46,7 @@ You can find all releases here:
 To install the current development version ahead of releases check out the development branches.
 | Branch          | Purpose
 |-----------------|-------------
-| development-1.0 | Bug fixes and documentation adding onto version 1.0.1
-| development-1.1 | Development of new major features
+| development-1.1 | Bug fixes and documentation adding onto version 1.1.0
 
 After downloading the desired version you can find the `fitting_toolkit.py` in the `src` folder and copy it into your project.
 
