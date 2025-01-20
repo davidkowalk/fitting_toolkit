@@ -18,7 +18,7 @@ z += 0.05*np.random.normal(size=z.shape)
 theta_0 = np.array([3, 2, 2, 1, 1])
 
 #fit data
-from fitting_toolkit.fitting_toolkit import custom_fit as fit
+from fitting_toolkit.fitting_toolkit import multivariate_fit as fit
 popt, pcov = fit(model, xy_data, z, sigma=np.ones_like(z), theta_0=theta_0)
 print(popt)
 print(np.sqrt(np.diag(pcov)))
