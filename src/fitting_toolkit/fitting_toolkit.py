@@ -162,6 +162,8 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
          resampled_points = model_axis
     elif model_resolution is None:
         resampled_points = xdata
+    elif type(model_resolution) is not int:
+        raise ValueError("Model resolution must be integer")
     elif model_resolution > 0:
         resampled_points = np.linspace(min(xdata), max(xdata), model_resolution) 
     else:
@@ -206,6 +208,9 @@ def fit_peaks(events, peak_estimates = None, peak_limits = None, sigma_init=None
           - cov: Covariance matrix for the parameter estimates.
           - Other attributes are set to `None` in the current implementation.
     """
+    if peak_estimates is None:
+        raise ValueError("Must provide peak_estimates for peak fitting.")
+
     peak_number = len(peak_estimates)
     if model is None:
         model = generate_gaussian_mix(peak_number)
@@ -216,13 +221,11 @@ def fit_peaks(events, peak_estimates = None, peak_limits = None, sigma_init=None
             raise ValueError("peak_limits is None. Bounds must be provided for annealing")
         if sigma_init is None:
             raise ValueError("sigma_init is None. Bounds must be provided for annealing")
-        if peak_estimates is None:
-            raise ValueError("Must provide peak_estimates for annealing.")
         if theta_0 is not None:
             warnings.warn("Initial parameters for local optimization are set by annealing and are ignored.")
     else:
-        if peak_limits is not None:
-            warnings.warn("Bounds for local optimization cannot be automatically generated. Pass via anneal_options")
+        #if peak_limits is not None:
+        #    warnings.warn("Bounds for local optimization cannot be automatically generated. Pass via anneal_options")
         if sigma_init is not None and theta_0 is not None:
             warnings.warn("Provided both sigma_init and theta_0. sigma_init will be overwritten.")
         if theta_0 is None and (peak_estimates is None or sigma_init is None):

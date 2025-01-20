@@ -36,6 +36,8 @@ class TestCurveFit(unittest.TestCase):
         params, cov, lower, upper = fit.params, fit.cov, fit.lower, fit.upper
         #y_fit = model(x, *params)
 
+        chi_sqrd = fit.reduced_chi_sqrd(x, y, dy)
+
         diff = (np.abs(m  - params[0]), np.abs(c - params[1]))
         sigmas = np.sqrt(np.diagonal(cov))
 
@@ -44,6 +46,9 @@ class TestCurveFit(unittest.TestCase):
 
         fig, ax = plot_fit(x, y, fit, yerror=dy)
         fig.savefig("./tests/plot.png")
+
+        with self.assertRaises(ValueError, msg="Invalid Method should raise an error."):
+            curve_fit(model, x, y, yerror=None, nsigma=1, method="other")
 
     def test_curve_fit_mle(self):
         #This test may not pass simply due to statistics
@@ -61,11 +66,14 @@ class TestCurveFit(unittest.TestCase):
         n = 10
         x = np.linspace(0, 2, n)
         dy = 1
+        dx = np.array([1]*len(x))
         m = np.random.normal(0, 2)
         c = np.random.normal(2, 3)
 
         #simulate Data
         y = m*x + c + np.random.normal(loc = 0, scale = dy, size = n)
+
+        #with y error
         fit = curve_fit(model, x, y, yerror=np.asarray([dy]*len(x)), nsigma=1, method="mle")
         params, cov, lower, upper = fit.params, fit.cov, fit.lower, fit.upper
         #y_fit = model(x, *params)
@@ -75,6 +83,42 @@ class TestCurveFit(unittest.TestCase):
 
         self.assertLessEqual(diff[0], sigmas[0]*2)
         self.assertLessEqual(diff[1], sigmas[1]*2)
+
+        #with x and y error
+        fit = curve_fit(model, x, y, xerror=dx, yerror=np.asarray([dy]*len(x)), model_axis=np.linspace(0, 1, 10), nsigma=1, method="mle")
+        params, cov, lower, upper = fit.params, fit.cov, fit.lower, fit.upper
+        #y_fit = model(x, *params)
+
+        diff = (np.abs(m  - params[0]), np.abs(c - params[1]))
+        sigmas = np.sqrt(np.diagonal(cov))
+
+        self.assertLessEqual(diff[0], sigmas[0]*2)
+        self.assertLessEqual(diff[1], sigmas[1]*2)
+
+        #test model axis
+        res = 5
+        fit = curve_fit(model, x, y, xerror=dx, yerror=np.asarray([dy]*len(x)), model_resolution=res, nsigma=1, method="mle")
+        lower, upper = fit.lower, fit.upper
+
+        self.assertEqual(len(lower), res)
+        self.assertEqual(len(upper), res)
+
+        #test warnings
+        with self.assertRaises(ValueError, msg="Shape mismatch between input and output should raise an error."):
+            curve_fit(model, [1, 2, 3], y, yerror=np.asarray([dy]*len(x)), nsigma=1, method="mle")
+
+        with self.assertRaises(ValueError, msg="MLE without y-error should raise an error."):
+            curve_fit(model, x, y, yerror=None, nsigma=1, method="mle")
+
+        with self.assertRaises(ValueError, msg="MLE without y-error = 0 should raise an error."):
+            curve_fit(model, x, y, yerror=[0], nsigma=1, method="mle")
+
+        with self.assertRaises(ValueError, msg="Invalid Resolution should throw an error"):
+            curve_fit(model, x, y, yerror=np.array([dy]*len(y)), nsigma=1, model_resolution="Nuclear Physics", method="mle")
+
+        with self.assertRaises(ValueError, msg="Invalid Resolution should throw an error"):
+            curve_fit(model, x, y, yerror=np.array([dy]*len(y)), nsigma=1, model_resolution=-1, method="mle")
+
 
     def test_infinite_covariance_warning(self):
 
@@ -216,7 +260,7 @@ class TestFitPeaks(unittest.TestCase):
             np.random.normal(loc=self.peaks[1], scale=1.5, size=100),  # Peak 2
         ])
         self.peak_estimates = self.peaks # Initial guesses for peak locations
-        self.peak_limits = 1  # Allow peaks to deviate by up to ±2 units
+        self.peak_limits = 1  # Allow peaks to deviate by up to ±1 units
         self.sigma_init = 2  # Initial guess for standard deviation
 
     def test_single_peak(self):
@@ -227,7 +271,9 @@ class TestFitPeaks(unittest.TestCase):
         sigma_init = 0.5
 
         # Call fit_peaks
-        result = fit_peaks(events, peak_estimates, peak_limits, sigma_init)
+        result = fit_peaks(events, peak_estimates=peak_estimates, peak_limits=peak_limits, sigma_init=sigma_init)
+
+        result_str = result.__repr__()
 
         # Check if the result is a Fit object
         self.assertIsInstance(result, Fit)
@@ -235,6 +281,19 @@ class TestFitPeaks(unittest.TestCase):
         # Check that the fitted mean is close to the true value
         fitted_means = result.params[0::3]  # Extract means (mu)
         self.assertAlmostEqual(fitted_means[0], 2, delta=0.1)
+
+        # Check Warnings and Exceptions
+        with self.assertWarns(Warning):
+            theta_0 = [2, 0.5]
+            fit_peaks(events, peak_estimates=peak_estimates, peak_limits=peak_limits, sigma_init=sigma_init, theta_0=theta_0)
+        
+        with self.assertRaises(ValueError):
+            fit_peaks(events, peak_limits=peak_limits, sigma_init=sigma_init)
+
+        with self.assertRaises(ValueError):
+            fit_peaks(events, peak_estimates=peak_estimates, peak_limits=peak_limits)
+
+
 
     def test_multiple_peaks(self):
         """Test fitting multiple Gaussian peaks."""
@@ -259,6 +318,19 @@ class TestFitPeaks(unittest.TestCase):
         # Check the fitted means are close to the true values
         fitted_means = result.params[0::3]  # Extract means (mu)
         np.testing.assert_allclose(fitted_means, [0, 5], atol=0.5)
+
+        with self.assertRaises(ValueError, msg = "Annealing must provide peak limits."):
+            fit_peaks(self.events, self.peak_estimates, None, self.sigma_init, anneal=True)
+        
+        with self.assertRaises(ValueError, msg = "Annealing must provide sigma limits."):
+            fit_peaks(self.events, self.peak_estimates, self.peak_limits, None, anneal=True)
+
+        with self.assertRaises(ValueError, msg = "Annealing must provide peak estimates."):
+            fit_peaks(self.events, None, self.peak_limits, self.sigma_init, anneal=True)
+
+        with self.assertWarns(Warning):
+            fit_peaks(self.events, self.peak_estimates, self.peak_limits, self.sigma_init, anneal=True, theta_0=list())
+
 
     def test_custom_model(self):
         """Test fitting with a custom model."""
