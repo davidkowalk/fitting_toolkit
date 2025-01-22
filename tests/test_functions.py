@@ -10,16 +10,15 @@ Linux: python3 -m unittest discover -s tests
 """
 
 class TestCurveFit(unittest.TestCase):
-    
-    def test_curve_fit_linear(self):
-        #This test may not pass simply due to statistics
 
-        #print("test_curve_fit_linear")
-        #print("Please be aware that this test may fail due to statistics.")
-        #print("If this test fails please run again before reporting.")
-
+    def setUp(self):
+        
         def model(x, m, c):
             return m * x + c
+        
+        self.model_lin = model
+    
+    def test_curve_fit_linear(self):
 
         #Define Parameters
         np.random.seed(420) #set seed for reproducability
@@ -32,9 +31,8 @@ class TestCurveFit(unittest.TestCase):
 
         #simulate Data
         y = m*x + c + np.random.normal(loc = 0, scale = dy, size = n)
-        fit = curve_fit(model, x, y, yerror=None, nsigma=1, absolute_sigma = True)
+        fit = curve_fit(self.model_lin, x, y, yerror=None, nsigma=1, absolute_sigma = True)
         params, cov, lower, upper = fit.params, fit.cov, fit.lower, fit.upper
-        #y_fit = model(x, *params)
 
         chi_sqrd = fit.reduced_chi_sqrd(x, y, dy)
 
@@ -48,17 +46,9 @@ class TestCurveFit(unittest.TestCase):
         fig.savefig("./tests/plot.png")
 
         with self.assertRaises(ValueError, msg="Invalid Method should raise an error."):
-            curve_fit(model, x, y, yerror=None, nsigma=1, method="other")
+            curve_fit(self.model_lin, x, y, yerror=None, nsigma=1, method="other")
 
     def test_curve_fit_mle(self):
-        #This test may not pass simply due to statistics
-
-        #print("test_curve_fit_linear")
-        #print("Please be aware that this test may fail due to statistics.")
-        #print("If this test fails please run again before reporting.")
-
-        def model(x, m, c):
-            return m * x + c
 
         #Define Parameters
         np.random.seed(420) #set seed for reproducability
@@ -74,7 +64,7 @@ class TestCurveFit(unittest.TestCase):
         y = m*x + c + np.random.normal(loc = 0, scale = dy, size = n)
 
         #with y error
-        fit = curve_fit(model, x, y, yerror=np.asarray([dy]*len(x)), nsigma=1, method="mle")
+        fit = curve_fit(self.model_lin, x, y, yerror=np.asarray([dy]*len(x)), nsigma=1, method="mle")
         params, cov, lower, upper = fit.params, fit.cov, fit.lower, fit.upper
         #y_fit = model(x, *params)
 
@@ -85,7 +75,7 @@ class TestCurveFit(unittest.TestCase):
         self.assertLessEqual(diff[1], sigmas[1]*2)
 
         #with x and y error
-        fit = curve_fit(model, x, y, xerror=dx, yerror=np.asarray([dy]*len(x)), model_axis=np.linspace(0, 1, 10), nsigma=1, method="mle")
+        fit = curve_fit(self.model_lin, x, y, xerror=dx, yerror=np.asarray([dy]*len(x)), model_axis=np.linspace(0, 1, 10), nsigma=1, method="mle")
         params, cov, lower, upper = fit.params, fit.cov, fit.lower, fit.upper
         #y_fit = model(x, *params)
 
@@ -97,28 +87,58 @@ class TestCurveFit(unittest.TestCase):
 
         #test model axis
         res = 5
-        fit = curve_fit(model, x, y, xerror=dx, yerror=np.asarray([dy]*len(x)), model_resolution=res, nsigma=1, method="mle")
+        fit = curve_fit(self.model_lin, x, y, xerror=dx, yerror=np.asarray([dy]*len(x)), model_resolution=res, nsigma=1, method="mle")
         lower, upper = fit.lower, fit.upper
 
         self.assertEqual(len(lower), res)
         self.assertEqual(len(upper), res)
 
+    def test_curve_fit_mle_warnings(self):
+
+        n = 10
+        
+        x = np.linspace(0, 2, n)
+        dy = 1
+        m = np.random.normal(0, 2)
+        c = np.random.normal(2, 3)
+
+        #simulate Data
+        y = m*x + c + np.random.normal(loc = 0, scale = dy, size = n)
+
         #test warnings
         with self.assertRaises(ValueError, msg="Shape mismatch between input and output should raise an error."):
-            curve_fit(model, [1, 2, 3], y, yerror=np.asarray([dy]*len(x)), nsigma=1, method="mle")
+            curve_fit(self.model_lin, [1, 2, 3], y, yerror=np.asarray([dy]*len(x)), nsigma=1, method="mle")
 
         with self.assertRaises(ValueError, msg="MLE without y-error should raise an error."):
-            curve_fit(model, x, y, yerror=None, nsigma=1, method="mle")
+            curve_fit(self.model_lin, x, y, yerror=None, nsigma=1, method="mle")
 
         with self.assertRaises(ValueError, msg="MLE without y-error = 0 should raise an error."):
-            curve_fit(model, x, y, yerror=[0], nsigma=1, method="mle")
+            curve_fit(self.model_lin, x, y, yerror=[0], nsigma=1, method="mle")
 
         with self.assertRaises(ValueError, msg="Invalid Resolution should throw an error"):
-            curve_fit(model, x, y, yerror=np.array([dy]*len(y)), nsigma=1, model_resolution="Nuclear Physics", method="mle")
+            curve_fit(self.model_lin, x, y, yerror=np.array([dy]*len(y)), nsigma=1, model_resolution="Nuclear Physics", method="mle")
 
         with self.assertRaises(ValueError, msg="Invalid Resolution should throw an error"):
-            curve_fit(model, x, y, yerror=np.array([dy]*len(y)), nsigma=1, model_resolution=-1, method="mle")
+            curve_fit(self.model_lin, x, y, yerror=np.array([dy]*len(y)), nsigma=1, model_resolution=-1, method="mle")
 
+    def test_curve_fit_mle_test_scalar_error(self):
+        
+        n = 10
+        
+        x = np.linspace(0, 2, n)
+        dx = 2/3/n
+        dy = 1
+        m = np.random.normal(0, 2)
+        c = np.random.normal(2, 3)
+
+        #simulate Data
+        y = m*x + c + np.random.normal(loc = 0, scale = dy, size = n)
+
+        fit1 = curve_fit(self.model_lin, x, y, yerror=dy, nsigma=1, method="mle")
+        fit2 = curve_fit(self.model_lin, x, y, xerror = dx, yerror=dy, nsigma=1, method="mle")
+
+        self.assertEqual(len(fit1.params), 2)
+        self.assertEqual(len(fit2.params), 2)
 
     def test_infinite_covariance_warning(self):
 
