@@ -151,7 +151,7 @@ def curve_fit(model, xdata: np.array, ydata: np.array, yerror = None, method = "
     elif method == "mle":
         if yerror is None:
             raise ValueError("When using maximum likelyhood estimation y-errors are required.")
-        if 0 in yerror:
+        if yerror is 0 or (hasattr(yerror, "__len__") and 0 in yerror):
             raise ValueError("Error cannot be 0.")
         
         params, cov = curve_fit_mle(model = model, xdata=xdata, ydata=ydata, yerror=yerror, **kwargs)
