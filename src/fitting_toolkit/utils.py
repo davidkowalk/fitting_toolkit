@@ -88,6 +88,22 @@ def generate_gaussian_mix(n):
 
     return gaussian_mix
 
+def to_pgf(fig, filepath):
+    """
+        Exports figure as a pgf file, which can be imported into a latex project using \input
+    """
+    import matplotlib
+
+    matplotlib.rcParams.update({
+        "pgf.texsystem": "pdflatex",
+        'font.family': 'serif',
+        'font.size' : 11,
+        'text.usetex': True,
+        'pgf.rcfonts': False,
+    })
+
+    fig.savefig(filepath)
+
 def versions(print_versions = True, return_list = False):
     """
     Requests available versions of package from PyPI and prints as list.
