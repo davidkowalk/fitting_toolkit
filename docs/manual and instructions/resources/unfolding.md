@@ -16,15 +16,16 @@ To correct the binned measurement for detector biases the matrix $Q_{ij}$ must b
 $$
 \vec m = Q\cdot\vec x \implies \vec x = Q^{-1}\vec m
 $$
-if Q is invertible. The Matrix $Q$ is calculated by using the dual vector $\vec x^*$ of a known signal, defined as
+if Q is invertible.
+The Matrix $Q$ is calculated by using the dual vector $\vec k^*$ of a known signal. Let $\vec k$ be an element of an orthonormal base. Then
 $$
-    \vec x \cdot \vec x^* = 1
+\begin{aligned}
+    &&\vec k'^* Q \vec k &= Q_{k'k} \\
+    \Leftrightarrow && \bra{k'}Q\ket{k} &= Q_{k'k}
+\end{aligned}
 $$
-so that
-$$
-Q = \vec m \vec x^*
-$$
-Note that $m_i$ does not only depend on $x_i$ but on all signal bins.
+
+Note that $m_i$ does not only depend on $x_i$ but on all signal bins. To concretely calculate the matrix elements of Q the detector is exposed to an input signal of a known basis vector $\vec k$ and the measured vector $\vec m$ then corresponds to the $k$-th column of Q. This is usually done via Monte Carlo simulations.
 
 ## Continuous Generalization
 While determining the matrix elements from the measurement of a known signal for a discrete number of bins is numerically feasible it becomes an ill defined problem for continuous probability density functions.
@@ -67,4 +68,4 @@ The method assumes a linear, shift-invariant system where detector effects can b
 However the first order approcimation may be insufficient in real detectors. Response might be non-linear, position-dependent, or involve more complex smearing behaviors.
 
 ## Aknowledgements
-The author aknowledges productive discussions and major guidance from Dr. S. Neubert.
+The author thank Dr. S. Neubert and Dr. J. Kroha for productive discussions and major guidance.
