@@ -71,3 +71,16 @@ Given a bootstrapped distribution, generate a custom confidence interval.
 | **Name** | **Type** | **Description** |
 | lower_threshold | float | Point defined by `lower_frac` 
 | upper_threshold | float | Point defined by `upper_frac`
+
+
+## fitting_toolkit.utils.to_pgf
+
+```py
+to_pgf(fig, filepath)
+```
+
+| Parameters | | |
+|----------|----------|-----------------|
+| **Name** | **Type** | **Description** |
+| fig      | matplotlib.figure.Figure | Figure object to export
+| filepath | str      | Filepath of output file

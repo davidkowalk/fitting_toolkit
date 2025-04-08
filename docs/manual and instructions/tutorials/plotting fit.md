@@ -126,7 +126,7 @@ plot_fit(xdata2, ydata2, fit2, fig = fig, ax = ax1)
 plt.show()
 ```
 
-**Example for Staking Subplots in 2 Directions**
+**Example for Stacking Subplots in 2 Directions**
 ```py
 from matplotlib import pyplot as plt
 from fitting_toolkit import plot_fit
@@ -166,4 +166,40 @@ plt.plot(model_axis, lower_conf, color = "red")
 plt.plot(model_axis, upper_conf, color = "red")
 #Display
 plt.show()
+```
+
+## Exporting Graphics as a PGF-Plot 
+
+A short script is included as a wrapper for the matplotlib functionality to export the rendered graphics as a PGF plot. While Matplotlib supports the `svg` file format most LaTeX compiler do not. Therefore PGF is used to generate vector graphics in LaTeX documents and provide high quality plots without the requirement for prohibitively large file sizes.
+
+To export the file pass you figure object to `fitting_toolkit.utils.to_pgf()`
+```py
+fig, ax = plt.subplots()
+#add fit and data points as required
+
+from fitting_toolkit.utils import to_pgf
+to_pgf(fig, "path/to/file")
+```
+
+To include the graphics in your LaTeX document first add the following definition to the preamble:
+```latex
+\def\mathdefault#1{#1}
+```
+Make sure to also include the relevant packages:
+```latex
+\usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{tikz-cd}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.14}
+```
+
+Then input your object at the appropriate position in your `document` environment:
+
+```latex
+\begin{figure}
+    \centering
+    \input{plot.pgf}
+    \caption{Caption Text}
+\end{figure}
 ```
