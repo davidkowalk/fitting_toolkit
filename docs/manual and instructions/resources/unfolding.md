@@ -1,17 +1,18 @@
 # Unfolding
 
 For complex processes the physical properties of any experiment introduce inherent systematic errors to the measurement of the underlying probability distribution.
-The effects may range from a blurring effect to the significant shift of resulting measurements.
+The distortion may range from a blurring effect to the significant shift of resulting measurements.
 The process of disconvoluting the detector effects from a probability distribution is calles "unfolding". Unfolding as a problem does not have a single well defined solution, but has rather spawned a whole debate about the different approaches to effeciently removing systematic errors from measurements.
 
 ## The simplest possible case.
 
-Take a bined measurement of a variable x. The measurement $m_i$ may be defined as
+Take a binned measurement of a variable x. The measurement $m_i$ may be defined as
 $$
     m_i = \underbrace{\sum_j Q_{ij}x_j}_{\text{Convolution}} + \overbrace{c_i}^{\text{Background}}
 $$
 
-Where the first part is the convolution and the latter is the background. For now the background $c_i$ is assumed to be negligable.
+Where the first part is the convolution and the latter is the background.
+The background $c_i$ is subtracted from the measurement before unfolding and can be disregarded.
 To correct the binned measurement for detector biases the matrix $Q_{ij}$ must be measured. By expressing
 $$
 \vec m = Q\cdot\vec x \implies \vec x = Q^{-1}\vec m
@@ -21,7 +22,8 @@ The Matrix $Q$ is calculated by using the dual vector $\vec k^*$ of a known sign
 $$
 \begin{aligned}
     &&\vec k'^* Q \vec k &= Q_{k'k} \\
-    \Leftrightarrow && \bra{k'}Q\ket{k} &= Q_{k'k}
+    \Leftrightarrow && \bra{k'}Q\ket{k} &= Q_{k'k}\\
+    \Leftrightarrow && \bra{m}Q\ket{k} &= \braket{m|m}
 \end{aligned}
 $$
 
@@ -65,7 +67,7 @@ Unfolding is inherently an ill-defined inversion problem: small fluctuations in 
 Especially in high-frequency components (large $k$), $\hat{p}(k)$ becomes unreliable due to division by potentially small $\hat{Q}(k)$.
 
 The method assumes a linear, shift-invariant system where detector effects can be modeled as a convolution.
-However the first order approcimation may be insufficient in real detectors. Response might be non-linear, position-dependent, or involve more complex smearing behaviors.
+However the first order approximation may be insufficient in real detectors. Response might be non-linear, position-dependent, or involve more complex smearing behaviors.
 
 ## Aknowledgements
-The author thank Dr. S. Neubert and Dr. J. Kroha for productive discussions and major guidance.
+The author thanks Dr. S. Neubert and Dr. J. Kroha for productive discussions and major guidance.
