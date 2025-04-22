@@ -137,6 +137,7 @@ plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsiz
 |confidence_label | str, optional | Label applied to upper confidence threshold.
 |fig       | matplotlib.pyplot.Figure, optional | Figure Object to use for plotting. If not provided it is either inferred from `ax` if given, or a new object is generated.
 |ax        | matplotlib.axes.Axes, optional | Axes object to be used for plotting. If not provided it is either inferred from `fig`, or a new object is generated. 
+|style     | Select from common preset styles. Preconfigured options are "open" for an open grid and "boxe" for spines on all sides, ROOT-style
 |**kwargs  || Additional arguments passed to `pyplot.subplots()`
 
 

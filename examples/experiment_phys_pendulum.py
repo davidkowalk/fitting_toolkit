@@ -19,7 +19,7 @@ dt = 0.5/10
 confidence_resolution = 100
 
 fit = curve_fit(model, len, t, yerror=dt, model_resolution = confidence_resolution, absolute_sigma = True)
-fig, ax = plot_fit(len, t, fit, xerror=dlen, yerror=dt)
+fig, ax = plot_fit(len, t, fit, xerror=dlen, yerror=dt, style = "boxed")
 ax.set_xlabel("Pendulum Length / cm")
 ax.set_ylabel("Oscillation Time T / s")
 plt.show()

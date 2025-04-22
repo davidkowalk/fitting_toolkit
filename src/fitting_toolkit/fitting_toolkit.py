@@ -308,7 +308,7 @@ def multivariate_fit(model, input, output, sigma, theta_0, **kwargs):
     result =  minimize(loss_function, theta_0, **kwargs)
     return result.x, result.hess_inv
 
-def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, line_kwargs = {}, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, **kwargs) -> tuple[plt.figure, plt.axes]:
+def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, capsize = 4, line_kwargs = {}, fit_color = "black", fit_label = "Least Squares Fit", confidence_label = "1$\\sigma$-Confidence", fig = None, ax = None, style = "open", **kwargs) -> tuple[plt.figure, plt.axes]:
     """
     Plots the model fit to the data along with its confidence intervals.
 
@@ -331,6 +331,7 @@ def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, ca
         confidence_label(str, optional): Label applied to upper confidence threshold.
         fig (matplotlib.pyplot.Figure, optional): Figure Object to use for plotting. If not provided it is either inferred from ax if given or a new object is generated.
         ax (matplotlib.axes.Axes, optional): Axes object to be used for plotting. If not provided it is either inferred from fig, or a new object is generated. 
+        style (str, optional): Select style preset for plot. (\"open\", \"boxed\")
         **kwargs: Additional arguments passed to `pyplot.subplots()`
 
     Returns:
@@ -355,11 +356,18 @@ def plot_fit(xdata, ydata, fit, xerror = None, yerror = None, markersize = 4, ca
         raise ValueError(f"x-axis does not match length of upper confidence interval\nx: {np.shape(fit.axis)}, y: {np.shape(fit.upper)}")
     
     if fig is None and ax is None:
+
         fig, ax = plt.subplots(**kwargs)
-        
-        ax.spines[["top", "right"]].set_visible(False)
-        ax.grid("both")
-        ax.set_axisbelow(True)
+        if style == "open":
+            ax.spines[["top", "right"]].set_visible(False)
+            ax.grid("both")
+            ax.set_axisbelow(True)
+
+        elif style == "boxed":
+            ax.grid("both", linestyle = ":")
+            ax.tick_params(direction = "in", length = 5, bottom = True, top = True, left = True, right = True)
+            ax.set_axisbelow(True)
+
 
     elif ax is None:
         ax = fig.axes[0] #Choose first axes object in Figure
